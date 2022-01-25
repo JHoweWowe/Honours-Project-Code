@@ -1,0 +1,19 @@
+<!-- THIS IS JUST AN EXAMPLE -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Should have back button?? -->
+    <h1>{% block title %} Relevant Recipes {% endblock %}</h1>
+    <div style="width: 75%; margin: auto">
+        {% for d in data %}
+        <div style="padding: 10px; background-color: #EEE; margin: 20px">
+            <img src="{{ d.image_url }}">
+            <a href="{{ url_for('view_recipe', id = d._id) }}">
+                <h1> {{ d.title }} </h1>
+            </a>
+            <!-- Change size -->
+            <h5> {{ d.description }} </h5>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
