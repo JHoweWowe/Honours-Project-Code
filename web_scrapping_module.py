@@ -1,6 +1,7 @@
 # Setup database for storing and retrieving food recipe data
-import pymongo
 from pymongo import MongoClient
+
+from web_scrapping_module_helper import WebScrapperHelper
 
 client = MongoClient('localhost', 27017)
 recipe_db = client['honours-proj-website-recipes']
@@ -19,23 +20,34 @@ recipes = soup.findAll('li', class_ = 'dynamic-list__list-item list-item')
 
 recipes_json_list = []
 
+web_scrapper_helper = WebScrapperHelper()
+
 # NOTE: For BBCGoodFood, only loads information up to a certain page - should also have unique id associated to each recipe
 for recipe in recipes:
     specific_recipe_url = recipe.find('a', class_ = 'link d-block').get('href')
 
     title = recipe.find('h2', class_ = 'd-inline heading-4').text
-    description = recipe.find('p', class_ = 'd-block body-copy-small').text # NOTE: Should it be stored???
+    description = recipe.find('p', class_ = 'd-block body-copy-small').text
     
     image_url = recipe.find('img', class_ = 'image__img')['src']
 
-    cooking_time = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center').text
-    cooking_difficulty = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center')
+    total_time_str = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center').text
+    total_time_mins = web_scrapper_helper.convert_timeStr_to_Mins(total_time_str)
 
+    #cooking_difficulty = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center')
 
     # jialat specifically find information from individual recipe url can
     individual_recipe_url = base_url + specific_recipe_url
     individual_html_recipe_text = requests.get(individual_recipe_url).text
     soup = BeautifulSoup(individual_html_recipe_text, features='html.parser')
+
+    # Obtain dietary requirements
+    dietary_requirements_ul = soup.find('ul', class_='terms-icons-list d-flex post-header__term-icons-list mt-sm hidden-print list list--horizontal')
+    dietary_requirements_array = []
+    if dietary_requirements_ul is not None:
+        for t in dietary_requirements_ul:
+            dietary_requirements_array.append(t.span.get_text())
+
     individual_recipe_itself = soup.find('div', class_='post recipe')
     ingredients = individual_recipe_itself.find('div', class_ = 'row recipe__instructions')
 
@@ -51,13 +63,13 @@ for recipe in recipes:
     for t2 in test2:
         steps_array.append(t2.p.text)
 
-
-    # TODO: Add ingredients
+    # TODO: Add prep, cook & total time and 
     recipe_json = {
         "title": title,
         "description": description,
         "image_url": image_url,
-        "time": cooking_time,
+        "total_time": total_time_mins,
+        "dietary_requirements": dietary_requirements_array,
         "ingredients": list_of_ingredients_array,
         "steps": steps_array
     }
@@ -66,6 +78,6 @@ for recipe in recipes:
 
 #print(recipes_json_list) # For debugging purposes
 
-# Bad code practice to store and conduct bulk queries...
+# Bad code practice to store individual recipes...better to conduct bulk queries for faster time runtime
 result = test_recipe_collection.insert_many(recipes_json_list)
 
