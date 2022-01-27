@@ -7,36 +7,50 @@ import json
 app = Flask(__name__)
 mongo = PyMongo(app, uri="mongodb://localhost:27017/honours-proj-website-recipes")
 
+# THIS IS DEFINITELY NOT GOOD PRACTICE - POSSIBLY BASED ON RANKING AND DIETARY REQUIREMENTS???
+featured_recipes_data = list(mongo.db.bbcgoodfood.aggregate([
+    {"$sample": {"size": 3}}, # Just a test
+]))
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', featured_recipes_data = featured_recipes_data)
 
-# Test with filters as arguments
+# Refactor - filters as arguments
 @app.route('/', methods=['POST'])
 def search_recipes():
     requirements = dict()
     filters = dict()
 
-    time = request.form.get('cooking-time', default='')
-    if time != '':
-        requirements['time'] = time
+    time_str = request.form.get('total-cooking-time', default='')
+    dietary_requirements_str = request.form.get('dietary-requirements-dropdown', default='')
+
+    if time_str != '':
+        requirements['total_time'] = int(time_str)
+    if dietary_requirements_str != '':
+        requirements['dietary_requirements'] = dietary_requirements_str
+    
+    print('Dietary Requirements: ' + str(requirements))
 
     return test_get_recipe_data(requirements)
+
+def quick_search_recipes():
+    # TODO: Create quick search functionality
+    pass
 
 @app.route('/test-route-recipes', methods=['GET'])
 def test_get_recipe_data(requirements):
     try:
         #data = list(mongo.db.bbcgoodfood.find({"time": time})) # Takes recipes with 50 mins
-        print(len(requirements))
-
 
         data = list(mongo.db.bbcgoodfood.aggregate([
             {"$match": requirements},
             {"$sample": {"size": 3}}, # Just a test
         ]))
+
         for recipe in data:
             recipe["_id"] = str(recipe["_id"])
-        return render_template('recipes.html', data=data)
+        return render_template('recipes.html', data=data, featured_recipes_data = featured_recipes_data)
 
     except Exception as ex:
         print(ex)
