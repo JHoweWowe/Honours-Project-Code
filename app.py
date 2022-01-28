@@ -7,12 +7,10 @@ import json
 app = Flask(__name__)
 mongo = PyMongo(app, uri="mongodb://localhost:27017/honours-proj-website-recipes")
 
-# THIS IS DEFINITELY NOT GOOD PRACTICE - POSSIBLY BASED ON RANKING AND DIETARY REQUIREMENTS???
-featured_recipes_data = list(mongo.db.bbcgoodfood.aggregate([
-    {"$sample": {"size": 3}}, # Just a test
-]))
+# THIS IS DEFINITELY NOT GOOD PRACTICE - POSSIBLY BASED ON HIGHEST RANKING AND DIETARY REQUIREMENTS???
+featured_recipes_data = list(mongo.db.bbcgoodfood.find({'average_rating': { '$gt': 4.4, '$lt': 5}}).sort('number_of_ratings', -1).limit(3))
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     return render_template('index.html', featured_recipes_data = featured_recipes_data)
 
