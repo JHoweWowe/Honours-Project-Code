@@ -19,35 +19,33 @@ def index():
 
 @app.route('/search', methods=['GET'])
 def search():
-
     try:
-        requirements = dict()
-        time_str = request.args.get('total-cooking-time')
-        dietary_requirements_str = request.args.get('dietary-requirements-dropdown')
+        collection = []
+        sample_dict_size = dict()
+        sample_dict_size["$sample"] = {"size" : 3} # RANDOM SAMPLE SIZE - can easily be customizable
+        
+        match_requirements = dict()
+        match_inner_requirements = dict()
 
-        if time_str != '':
-            requirements['total_time'] = int(time_str)
+        if request.args.get('cooking-time-range') != '0':
+            time = int(request.args.get('cooking-time-range'))
+            match_inner_requirements['total_time'] = { "$lte": time }
 
-        if dietary_requirements_str != None:
-            requirements['dietary_requirements'] = dietary_requirements_str
-
-        data = list(mongo.db.bbcgoodfood.aggregate(
-            [
-                {"$match": requirements},
-                {"$sample": {"size": 3}} # Max size is 3...just a test
-            ]
-        ))
+        if request.args.get('dietary-requirements-dropdown') != None:
+            match_inner_requirements['dietary_requirements'] = request.args.get('dietary-requirements-dropdown')
 
         if request.args.get('q') != '':
-
             search_query_str = '\"' + str(request.args.get('q')) + '\"'
-            data = list(mongo.db.bbcgoodfood.aggregate(
-                [
-                    {"$match": {"$text": { "$search": search_query_str}}},
-                    {"$match": requirements},
-                    {"$sample": {"size": 3}} # Max size is 3...just a test
-                ]
-            ))
+            match_inner_requirements['$text'] = { "$search": search_query_str }
+
+
+        if len(match_inner_requirements) > 0:
+            match_requirements["$match"] = match_inner_requirements
+            collection.append(match_requirements)
+
+        collection.append(sample_dict_size)
+        
+        data = list(mongo.db.bbcgoodfood.aggregate(collection))
 
         return render_template('recipes.html', data=data, featured_recipes_data = featured_recipes_data)
 
