@@ -8,6 +8,7 @@ Browser - HTML,CSS,JS,BootStrap (If time allows, use React for scability)
 1. Install MongoDB
 2. Open MongoDBCompass and connect it to localhost with port of 27017
 3. Ensure Flask is setup properly
+4. Go to `settings.ini` and type in API keys accordingly
 
 # Execute Server
 1. Ensure MongoDB is running (in background)
