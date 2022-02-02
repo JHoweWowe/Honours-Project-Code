@@ -15,7 +15,3 @@ class WebScrapperHelper():
                 mins += (int(time_str_array[0]))
 
         return mins
-
-helper = WebScrapperHelper()
-mins = helper.convert_timeStr_to_Mins("1 hr")
-print(mins)
