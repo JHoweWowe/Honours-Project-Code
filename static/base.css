@@ -1,4 +1,38 @@
-/** TBC - may refer to old code developed earlier **/
+/** First Mobile Responsive Design approach **/
+#search-container {
+    margin: 32px auto;
+}
+#relevant-recipes-title-div {
+    display: flex;
+    align-items: center;
+    margin: 8px auto;
+}
+#block-title {
+    margin-left: 1rem;
+    font-family: var(--bs-body-font-family);
+    font-size: calc(2.5rem + 1.5vw);
+}
+#relevant-recipes-row-div {
+    justify-content: center;
+}
+#featured-recipe-container {
+    margin: 8px auto;
+}
+#relevant-recipe-container {
+    margin: 8px auto;
+    width: 95%;
+}   
 
-/** Includes Header **/
-
+/** Screens larger than 768px which is default breakpoint **/
+@media screen and (min-width: 768px) {
+    #search-container {
+        width: 50vw;
+    }
+    #featured-recipe-container {
+        margin: 0px 8px;
+    }
+    #relevant-recipe-container {
+        width: 40%;
+        margin: 8px;
+    }    
+}
