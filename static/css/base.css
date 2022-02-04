@@ -17,10 +17,12 @@
 }
 #featured-recipe-container {
     margin: 8px auto;
+    padding: 8px;
 }
 #relevant-recipe-container {
     margin: 8px auto;
     width: 95%;
+    padding: 8px;
 }   
 
 /** Screens larger than 768px which is default breakpoint **/
