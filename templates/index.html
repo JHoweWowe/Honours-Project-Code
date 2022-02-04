@@ -27,7 +27,7 @@
                 <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                   <div class="accordion-body">
                     <div id="total-cooking-time-container">
-                      <h3>Maximum Cooking Time:</h3>
+                      <h3>Maximum Total Cooking Time:</h3>
                       <div class="slidecontainer">
                         <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="cooking-time-range">
                         <p><span id="cooking-time-span-value"></span> mins</p>
@@ -67,7 +67,13 @@
                   <img class="card-img-top" src="{{ d.image_url }}" alt="{{ d.description }}">
                   <div class="card-body">
                       <h5 class="card-title">{{ d.title }}</h5>
-                      <p class="card-text">Dietary Requirements: {{ d.dietary_requirements }}</p>
+                      <p class="card-text">Dietary Requirements:
+                        {% if d.dietary_requirements | length == 0 %}
+                        None
+                        {% else %}
+                        {{ d.dietary_requirements }}
+                        {% endif %}
+                      </p>
                       <p class="card-text">Average Rating: {{ d.average_rating }} / 5</p>
                       <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>
                       <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
