@@ -22,16 +22,21 @@ class SpoonacularAPI():
         # Check response status code validity
         if r.status_code == 200:
             results = r.json()
-            #ingredients_list = results['ingredients']
+            ingredients_list_dict = results['ingredients']
+            ingredients_tag_list = []
+
             equipment_list_dict = results['equipment']
             equipment_list = []
+
+            for ingredients_dict in ingredients_list_dict:
+                ingredients_tag_list.append(ingredients_dict['name'])
 
             for equipment_dict in equipment_list_dict:
                 equipment_list.append(equipment_dict['name'])
 
-            return equipment_list
+            return ingredients_tag_list, equipment_list
         else:
-            return []
+            return tuple([], [])
 
     # TODO: Complete function acting as an endpoint call
     def another_function():

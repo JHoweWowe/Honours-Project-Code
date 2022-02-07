@@ -113,7 +113,7 @@ for recipe in recipes:
 
     # Analyze recipe instructions (aka get equipment)
     steps_str = ''.join(steps_array)
-    equipment_list = spoonacular_API.analyze_recipe_instructions(api_key, steps_str)
+    ingredients_tag_list, equipment_list = spoonacular_API.analyze_recipe_instructions(api_key, steps_str)
 
     # TODO: Add prep, cook & total time and 
     recipe_json = {
@@ -128,6 +128,7 @@ for recipe in recipes:
         "average_rating": average_rating,
         "number_of_ratings": number_of_ratings,
         "ingredients": list_of_ingredients_array,
+        "ingredient_tags": ingredients_tag_list,
         "steps": steps_array,
         "equipment": equipment_list
     }

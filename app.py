@@ -13,11 +13,11 @@ featured_recipes_data = list(mongo.db.bbcgoodfood.find({'average_rating': { '$gt
 
 mongo.db.bbcgoodfood.create_index([('title',TEXT), ('description', TEXT)],default_language ="english") # Enable text search
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html', featured_recipes_data = featured_recipes_data)
 
-@app.route('/search', methods=['GET'])
+@app.route('/search', methods=['GET', 'POST'])
 def search():
     try:
         collection = []
@@ -34,8 +34,21 @@ def search():
         if request.args.get('dietary-requirements-dropdown') != None:
             match_inner_requirements['dietary_requirements'] = request.args.get('dietary-requirements-dropdown')
 
-        if request.args.get('q') != '':
-            search_query_str = '\"' + str(request.args.get('q')) + '\"'
+        if request.args.get('include-ingredients') != '':
+            included_ingredients_list = request.args.get('include-ingredients').split(",") # Tokenization...
+            match_inner_requirements['ingredient_tags'] = { "$in": included_ingredients_list }
+        
+        if request.args.get('exclude-ingredients') != '':
+            excluded_ingredients_list = request.args.get('exclude-ingredients').split(",")
+            if match_inner_requirements.get('ingredient_tags') != None:
+                match_inner_requirements['ingredient_tags']["$nin"] = excluded_ingredients_list
+            else:
+                match_inner_requirements['ingredient_tags'] = {"$nin": excluded_ingredients_list }
+
+        search_query = request.args.get('q', None)
+        if search_query:
+            print(search_query)
+            search_query_str = '\"' + str(search_query) + '\"'
             match_inner_requirements['$text'] = { "$search": search_query_str }
 
 
