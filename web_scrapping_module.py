@@ -1,34 +1,37 @@
 # Setup database for storing and retrieving food recipe data
-from pymongo import MongoClient
-
+from flask_pymongo import pymongo
 from web_scrapping_module_helper import WebScrapperHelper
 
-client = MongoClient('localhost', 27017)
-recipe_db = client['honours-proj-website-recipes']
-test_recipe_collection = recipe_db['bbcgoodfood'] # By default should only collect recipes from BBCGoodFood
-
-# Setup API
 import requests, configparser, os
 from spoonacular_api import SpoonacularAPI
 
+# Setup Configuration for API and MongoDB
 spoonacular_API = SpoonacularAPI()
 config = configparser.ConfigParser()
-# Handle Settings initialization file
-if not os.path.exists('settings.ini'):
-    config['api_keys'] = {'spoonacular_api_key': 'write_your_api_key_here'}
-    config.write(open('settings.ini', 'w'))
-else:
-    config.read('settings.ini')
+config.read('settings.ini')
+
+base_uri = 'mongodb+srv://'
+
+db_name = config.get('food_recipe_database', 'food_recipe_database_name')
+test_recipe_collection = config.get('food_recipe_database', 'food_collection_name')
+
+username = config.get('food_recipe_database', 'username')
+password = config.get('food_recipe_database', 'password')
+uri = base_uri + username + ':' + password + '@honours-project.x6odc.mongodb.net/db?retryWrites=true&w=majority'
+
+mongo_client = pymongo.MongoClient(uri)
+recipe_db = mongo_client[db_name]
 
 api_key = config.get('api_keys', 'spoonacular_api_key')
 
 # Setup basic web scrapping
 from bs4 import BeautifulSoup
 
-# TODO: Web scrape multiple recipes from student recipes and obtain URL for each if applicable
 base_url = 'https://www.bbcgoodfood.com/recipes/collection/student-recipes'
+url_query = '?page=2' # TODO: Setup in config file for scrapping what website and page
+url = base_url + url_query
 
-html_text = requests.get(base_url).text
+html_text = requests.get(url).text
 soup = BeautifulSoup(html_text, features='html.parser') # Indicate HTML parser 
 recipes = soup.findAll('li', class_ = 'dynamic-list__list-item list-item')
 
@@ -41,12 +44,12 @@ for recipe in recipes:
     specific_recipe_url = recipe.find('a', class_ = 'link d-block').get('href')
 
     title = recipe.find('h2', class_ = 'd-inline heading-4').text
-    description = recipe.find('p', class_ = 'd-block body-copy-small').text
+    description = recipe.find('p', class_ = 'card__description d-block body-copy-small').text
     
     image_url = recipe.find('img', class_ = 'image__img')['src']
 
-    total_time_str = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center').text
-    total_time_mins = web_scrapper_helper.convert_timeStr_to_Mins(total_time_str)
+    #total_time_str = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center').text
+    #total_time_mins = web_scrapper_helper.convert_timeStr_to_Mins(total_time_str)
 
     #cooking_difficulty = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center')
 
@@ -58,6 +61,12 @@ for recipe in recipes:
     # Obtain author - for credability
     author_div = soup.find('div', class_='author-link')
     author_str = author_div.find('a', class_='link link--styled').get_text()
+
+    # Obtain total time
+    total_cooking_time_div = soup.find('div', class_ = 'icon-with-text time-range-list cook-and-prep-time post-header__cook-and-prep-time')
+    test_list = total_cooking_time_div.find_all('li', class_= 'body-copy-small list-item')
+    for test in test_list:
+        time = test_list.find('time')
 
     # Obtain default servings
     some_ul = soup.find('ul', class_='post-header__row post-header__planning list list--horizontal')

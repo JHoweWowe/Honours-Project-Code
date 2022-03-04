@@ -14,7 +14,9 @@ Browser - HTML,CSS,JS,BootStrap (If time allows, use React for scability)
 
 # Execute Server
 1. Ensure MongoDB is running (in background)
-2. Go to Git Bash terminal and execute `./run`
+2. Ensure `--host=0.0.0.0` is added to the `run.sh` script
+3. Go to Git Bash terminal and execute `./run.sh`
+
 
 # Web Scrapping
 1. Go to cmd and type `py web_scrapping_module.py`

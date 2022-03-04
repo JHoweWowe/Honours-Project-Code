@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 
 import configparser, json
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="", static_folder="static")
 #mongo = PyMongo(app, uri="mongodb://localhost:27017/honours-proj-website-recipes")
 
 config = configparser.ConfigParser()
@@ -85,3 +85,6 @@ def show_by_filters():
 def view_recipe(id):
     recipe_data = mongo.db.bbcgoodfood.find_one({"_id": ObjectId(id)})
     return render_template('recipe.html', id=id, recipe_data = recipe_data) # Data passed redudantly
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=5000)
