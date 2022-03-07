@@ -11,4 +11,8 @@ if not os.path.exists('settings.ini'):
         'username': 's1840358',
         'password': ''
     }
+    config['web_scrapping_module'] = {
+        'base_url': 'https://www.bbcgoodfood.com/recipes/collection/student-recipes',
+        'page': '1'
+    }
     config.write(open('settings.ini', 'w'))
