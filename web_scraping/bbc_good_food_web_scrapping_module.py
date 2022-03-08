@@ -12,15 +12,16 @@ config.read('settings.ini')
 
 base_uri = 'mongodb+srv://'
 
-db_name = config.get('food_recipe_database', 'food_recipe_database_name')
-test_recipe_collection = config.get('food_recipe_database', 'food_collection_name')
+db_name_str = config.get('food_recipe_database', 'food_recipe_database_name')
+test_recipe_collection_str = config.get('food_recipe_database', 'food_collection_name')
 
 username = config.get('food_recipe_database', 'username')
 password = config.get('food_recipe_database', 'password')
 uri = base_uri + username + ':' + password + '@honours-project.x6odc.mongodb.net/db?retryWrites=true&w=majority'
 
 mongo_client = pymongo.MongoClient(uri)
-recipe_db = mongo_client[db_name]
+recipe_db = mongo_client[db_name_str]
+test_recipe_collection = recipe_db[test_recipe_collection_str]
 
 api_key = config.get('api_keys', 'spoonacular_api_key')
 
@@ -28,7 +29,8 @@ api_key = config.get('api_keys', 'spoonacular_api_key')
 from bs4 import BeautifulSoup
 
 base_url = 'https://www.bbcgoodfood.com/recipes/collection/student-recipes'
-url_query = '?page=2' # TODO: Setup in config file for scrapping what website and page
+page_number_str = config.get('web_scrapping_module', 'page')
+url_query = '?' + 'page=' + page_number_str
 url = base_url + url_query
 
 html_text = requests.get(url).text
@@ -48,11 +50,6 @@ for recipe in recipes:
     
     image_url = recipe.find('img', class_ = 'image__img')['src']
 
-    #total_time_str = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center').text
-    #total_time_mins = web_scrapper_helper.convert_timeStr_to_Mins(total_time_str)
-
-    #cooking_difficulty = recipe.find('span', class_ = 'terms-icons-list__text d-flex align-items-center')
-
     # jialat specifically find information from individual recipe url can
     individual_recipe_url = base_url + specific_recipe_url
     individual_html_recipe_text = requests.get(individual_recipe_url).text
@@ -64,15 +61,22 @@ for recipe in recipes:
 
     # Obtain total time
     total_cooking_time_div = soup.find('div', class_ = 'icon-with-text time-range-list cook-and-prep-time post-header__cook-and-prep-time')
-    test_list = total_cooking_time_div.find_all('li', class_= 'body-copy-small list-item')
-    for test in test_list:
-        time = test_list.find('time')
+    prep_and_cook_time_list = total_cooking_time_div.find_all('time')
+
+    total_cooking_time = 0
+
+    for i in prep_and_cook_time_list:
+        if i.has_attr('datetime'):
+            total_cooking_time += WebScrapperHelper().convert_timeStr_to_Mins(i.text)
 
     # Obtain default servings
     some_ul = soup.find('ul', class_='post-header__row post-header__planning list list--horizontal')
     default_servings_ul = some_ul.find('li', class_='mt-sm list-item')
     default_servings_text = default_servings_ul.get_text()
-    default_servings = int(default_servings_text.split(" ")[1])
+    try:
+        default_servings = int(default_servings_text.split(" ")[1])
+    except ValueError:
+        default_servings = 0
 
     # Obtain rating details - including average rating and number of ratings
     rating_details = soup.find('div', class_='rating__values').find_all('span', limit=2) # Only obtain average rating & num of ratings
@@ -132,7 +136,7 @@ for recipe in recipes:
         "title": title,
         "description": description,
         "image_url": image_url,
-        "total_time": total_time_mins,
+        "total_time": total_cooking_time,
         "author": author_str,
         "default_servings": default_servings,
         "dietary_requirements": dietary_requirements_array,
