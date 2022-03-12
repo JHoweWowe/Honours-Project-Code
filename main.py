@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Response, request
-from flask_pymongo import PyMongo, pymongo
+from flask_pymongo import pymongo
 from pymongo import TEXT
 from bson.objectid import ObjectId
 
@@ -22,6 +22,7 @@ mongo = pymongo.MongoClient(uri)
 featured_recipes_data = list(mongo.db.bbcgoodfood.find({'average_rating': { '$gt': 4.4, '$lt': 5}}).sort('number_of_ratings', -1).limit(3))
 
 mongo.db.bbcgoodfood.create_index([('title',TEXT), ('description', TEXT)],default_language ="english") # Enable text search
+mongo.db.tasty.create_index([('title',TEXT), ('description', TEXT)],default_language ="english") # Enable text search
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -68,7 +69,10 @@ def search():
 
         collection.append(sample_dict_size)
         
-        data = list(mongo.db.bbcgoodfood.aggregate(collection))
+        bbc_good_food_data = list(mongo.db.bbcgoodfood.aggregate(collection))
+        tasty_recipes_data = list(mongo.db.tasty.aggregate(collection)) # Obtain two lists
+
+        data = bbc_good_food_data + tasty_recipes_data # TODO: Could shuffle following data
 
         return render_template('recipes.html', data=data, featured_recipes_data = featured_recipes_data)
 
@@ -83,7 +87,14 @@ def show_by_filters():
 # Routing for a specific recipe - perhaps add it as URL, pass recipe as parameter
 @app.route('/recipe/<id>', methods=['GET'])
 def view_recipe(id):
-    recipe_data = mongo.db.bbcgoodfood.find_one({"_id": ObjectId(id)})
+    # Determine which collection to use
+    if mongo.db.bbcgoodfood.find_one({"_id": ObjectId(id)}) is not None:
+        recipe_data = mongo.db.bbcgoodfood.find_one({"_id": ObjectId(id)})
+    elif mongo.db.tasty.find_one({"_id": ObjectId(id)}) is not None:
+        recipe_data = mongo.db.tasty.find_one({"_id": ObjectId(id)})
+    else:
+        recipe_data = mongo.db.bbcgoodfood.find_one({"_id": ObjectId(id)})
+
     return render_template('recipe.html', id=id, recipe_data = recipe_data) # Data passed redudantly
 
 if __name__ == '__main__':

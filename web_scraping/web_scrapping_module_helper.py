@@ -9,9 +9,9 @@ class WebScrapperHelper():
             mins += (int(time_str_array[0]) * 60) + int(time_str_array[2])
 
         elif (len(time_str_array) == 2): # Eg: "30 mins" OR "1 hr"
-            if (time_str_array[1] == 'hr' or time_str_array[1] == 'hrs'):
+            if (time_str_array[1] == 'hr' or time_str_array[1] == 'hour' or time_str_array[1] == 'hrs' or time_str_array[1] == 'hours'):
                 mins += (int(time_str_array[0]) * 60)
-            elif (time_str_array[1] == 'mins'):
+            elif (time_str_array[1] == 'mins' or time_str_array[1] == 'minutes'):
                 mins += (int(time_str_array[0]))
 
         return mins
