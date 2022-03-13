@@ -20,9 +20,10 @@
                       Sort By:
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, include='', exclude='', sort='relevance') }}">Most Relevant</a>
-                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, include='', exclude='', sort='rating') }}">Highest Rating</a>
-                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, include='', exclude='', sort='popularity') }}">Most Number of Ratings</a>
+                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='relevance') }}">Most Relevant</a>
+                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='rating') }}">Highest Rating</a>
+                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='popularity') }}">Most Number of Ratings</a>
+                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='time') }}">Lowest to Highest Cooking Time</a>
                       <a class="dropdown-item disabled" href="#">Lowest to Highest Price</a>
                     </div>
                 </div>

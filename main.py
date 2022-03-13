@@ -90,6 +90,9 @@ def search():
         elif request.args.get('sort') == 'popularity':
             sort_requirements['$sort'] = { 'number_of_ratings': -1 }
             collection.append(sort_requirements)
+        elif request.args.get('sort') == 'time':
+            sort_requirements['$sort'] = { 'total_time': 1 }
+            collection.append(sort_requirements)
 
     # Obtain recipes from each food recipe collection
     bbc_good_food_data = list(mongo.db.bbcgoodfood.aggregate(collection))
@@ -97,7 +100,16 @@ def search():
 
     data = bbc_good_food_data + tasty_recipes_data # TODO: Could shuffle following data
 
-    return render_template('recipes.html', data=data, query=query_str, time=time, sort=sort)
+    return render_template(
+        'recipes.html',
+        data=data,
+        query=query_str,
+        time=time,
+        dq=dietary_requirements_list,
+        include=include,
+        exclude=exclude,
+        sort=sort
+    )
 
 
 # Routing for a specific recipe - perhaps add it as URL, pass recipe as parameter
