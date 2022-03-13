@@ -6,7 +6,6 @@ from bson.objectid import ObjectId
 import configparser, json
 
 app = Flask(__name__, static_url_path="", static_folder="static")
-#mongo = PyMongo(app, uri="mongodb://localhost:27017/honours-proj-website-recipes")
 
 config = configparser.ConfigParser()
 config.read('settings.ini')
@@ -18,71 +17,88 @@ uri = base_uri + username + ':' + password + '@honours-project.x6odc.mongodb.net
 
 mongo = pymongo.MongoClient(uri)
 
-# THIS IS DEFINITELY NOT GOOD PRACTICE - POSSIBLY BASED ON HIGHEST RANKING AND DIETARY REQUIREMENTS???
-featured_recipes_data = list(mongo.db.bbcgoodfood.find({'average_rating': { '$gt': 4.4, '$lt': 5}}).sort('number_of_ratings', -1).limit(3))
-
+# TODO: Refactor this in search function instead?
 mongo.db.bbcgoodfood.create_index([('title',TEXT), ('description', TEXT)],default_language ="english") # Enable text search
 mongo.db.tasty.create_index([('title',TEXT), ('description', TEXT)],default_language ="english") # Enable text search
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # ASSUME FEATURED RECIPES HAVE AVG RATING BETWEEN 4.4 AND 4.9 AND SORTED BY NUMBER OF RATINGS DESCENDING
+    featured_recipes_data = list(mongo.db.bbcgoodfood.find({'average_rating': { '$gt': 4.4, '$lt': 5}}).sort('number_of_ratings', -1).limit(3))
     return render_template('index.html', featured_recipes_data = featured_recipes_data)
 
+# Order - $match, $sort, $group
+# TODO: Refactor URL routing
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    try:
-        collection = []
-        sample_dict_size = dict()
-        sample_dict_size["$sample"] = {"size" : 6} # RANDOM SAMPLE SIZE - can easily be customizable
+    collection = []
+    sample_dict_size = dict()
+    sample_dict_size["$sample"] = {"size" : 6} # RANDOM SAMPLE SIZE - can easily be customizable
+    
+    match_requirements = dict()
+    match_inner_requirements = dict()
+
+    # Initalize default params
+    time = 0
+    dietary_requirements_list = list() 
+    include = ''
+    exclude = ''
+    sort = 'relevance' # By default
+
+    if request.args.get('time') != '0':
+        time = int(request.args.get('time'))
+        match_inner_requirements['total_time'] = { "$lte": time }
+    
+    # Check which dietary requirements are requested - TODO: Refactor this as a function
+    if request.args.get('dq'):
+        dietary_requirements_list.append(request.args.get('dq'))
+    if len(dietary_requirements_list) > 0:
+        match_inner_requirements['dietary_requirements'] = { "$in": dietary_requirements_list }
+
+    if request.args.get('include'):
+        include = request.args.get('include')
+        ingredients_list = include.split(',')
+
+        match_inner_requirements['ingredient_tags'] = { "$in": ingredients_list }
+    
+    if request.args.get('exclude'):
+        exclude = request.args.get('exclude')
+        excluded_ingredients_list = exclude.split(',')
+        if match_inner_requirements.get('ingredient_tags') != None:
+            match_inner_requirements['ingredient_tags']["$nin"] = excluded_ingredients_list
+        else:
+            match_inner_requirements['ingredient_tags'] = {"$nin": excluded_ingredients_list }
+
+    query_str = ''
+    if request.args.get('q'):
+        query_str = request.args.get('q')
+        search_query_str = '\"' + str(query_str) + '\"'
+        match_inner_requirements['$text'] = { "$search": search_query_str }
+
+    if len(match_inner_requirements) > 0:
+        match_requirements["$match"] = match_inner_requirements
+        collection.append(match_requirements)
         
-        match_requirements = dict()
-        match_inner_requirements = dict()
+    collection.append(sample_dict_size)
 
-        if request.args.get('cooking-time-range') != '0':
-            time = int(request.args.get('cooking-time-range'))
-            match_inner_requirements['total_time'] = { "$lte": time }
+    # Optional sort aggregate function for recipes
+    sort_requirements = dict()
+    if request.args.get('sort'):
+        if request.args.get('sort') == 'rating':
+            sort_requirements['$sort'] = { 'average_rating': -1 }
+            collection.append(sort_requirements)
+        elif request.args.get('sort') == 'popularity':
+            sort_requirements['$sort'] = { 'number_of_ratings': -1 }
+            collection.append(sort_requirements)
 
-        if request.args.get('dietary-requirements-dropdown') != None:
-            match_inner_requirements['dietary_requirements'] = request.args.get('dietary-requirements-dropdown')
+    # Obtain recipes from each food recipe collection
+    bbc_good_food_data = list(mongo.db.bbcgoodfood.aggregate(collection))
+    tasty_recipes_data = list(mongo.db.tasty.aggregate(collection)) # Obtain two lists
 
-        if request.args.get('include-ingredients') != '':
-            included_ingredients_list = request.args.get('include-ingredients').split(",") # Tokenization...
-            match_inner_requirements['ingredient_tags'] = { "$in": included_ingredients_list }
-        
-        if request.args.get('exclude-ingredients') != '':
-            excluded_ingredients_list = request.args.get('exclude-ingredients').split(",")
-            if match_inner_requirements.get('ingredient_tags') != None:
-                match_inner_requirements['ingredient_tags']["$nin"] = excluded_ingredients_list
-            else:
-                match_inner_requirements['ingredient_tags'] = {"$nin": excluded_ingredients_list }
+    data = bbc_good_food_data + tasty_recipes_data # TODO: Could shuffle following data
 
-        search_query = request.args.get('q', None)
-        if search_query:
-            print(search_query)
-            search_query_str = '\"' + str(search_query) + '\"'
-            match_inner_requirements['$text'] = { "$search": search_query_str }
+    return render_template('recipes.html', data=data, query=query_str, time=time, sort=sort)
 
-
-        if len(match_inner_requirements) > 0:
-            match_requirements["$match"] = match_inner_requirements
-            collection.append(match_requirements)
-
-        collection.append(sample_dict_size)
-        
-        bbc_good_food_data = list(mongo.db.bbcgoodfood.aggregate(collection))
-        tasty_recipes_data = list(mongo.db.tasty.aggregate(collection)) # Obtain two lists
-
-        data = bbc_good_food_data + tasty_recipes_data # TODO: Could shuffle following data
-
-        return render_template('recipes.html', data=data, featured_recipes_data = featured_recipes_data)
-
-    except Exception as ex:
-        print(ex)
-        return Response(response= json.dumps({"message": "cannot read recipes"}), status=500, mimetype="application/json")
-
-# TODO: Complete show filter by...
-def show_by_filters():
-    pass
 
 # Routing for a specific recipe - perhaps add it as URL, pass recipe as parameter
 @app.route('/recipe/<id>', methods=['GET'])

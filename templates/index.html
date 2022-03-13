@@ -31,24 +31,43 @@
                         <div class="col-md-6" id="total-cooking-time-container">
                           <h3>Maximum Total Cooking Time:</h3>
                           <div class="slidecontainer">
-                            <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="cooking-time-range">
+                            <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="time">
                             <p><span id="cooking-time-span-value"></span> mins</p>
                           </div>       
                         </div>
                         <div class="col-md-6" id="dietary-requirements-container">
                           <h3>Dietary Requirements:</h3>
-                          <select name="dietary-requirements-dropdown" multiple="multiple">
-                            <option value="Vegetarian">Vegetarian</option>
-                            <option value="Vegan">Vegan</option>
-                            <option value="Gluten-free">Gluten-Free</option>
-                          </select>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Vegetarian" id="vegetarian-checkbox" name="dq">
+                            <label class="form-check-label" for="vegetarian-checkbox">
+                              Vegetarian
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Vegan" id="vegan-checkbox" name="dq">
+                            <label class="form-check-label" for="vegan-checkbox">
+                              Vegan
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Gluten-free" id="gluten-free-checkbox" name="dq">
+                            <label class="form-check-label" for="gluten-free-checkbox">
+                              Gluten-Free
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Pescatarian" id="pescatarian-checkbox" name="dq">
+                            <label class="form-check-label" for="pescatarian-checkbox">
+                              Pescatarian
+                            </label>
+                          </div>
                         </div>
                         <div class="col-md-12" id="ingredients-container">
                           <h1>Ingredients:</h1>
                           <h3>Include:</h3>
-                          <input type="text" name="include-ingredients" class="form-control" placeholder="Use commas to separate">
+                          <input type="text" name="include" class="form-control" placeholder="Use commas to separate">
                           <h3>Exclude:</h3>
-                          <input type="text" name="exclude-ingredients" class="form-control" placeholder="Use commas to separate">
+                          <input type="text" name="exclude" class="form-control" placeholder="Use commas to separate">
                         </div>
                       </div>
                     </div>

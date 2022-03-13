@@ -44,6 +44,10 @@ body {
 .card-text {
     margin-bottom: 4px;
 }
+.card-img {
+    width: 270px;
+    height: auto;
+}
 .recipe-more-info-div {
     position: absolute;
     bottom: 16px;
@@ -72,6 +76,7 @@ body {
     margin: 8px auto;
     padding: 8px;
     height: 600px;
+    width: 95%;
 }
 
 /** Screens larger than 768px which is default breakpoint **/
