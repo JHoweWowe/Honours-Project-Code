@@ -93,6 +93,21 @@
                 {% endfor %}
             </div>
         </div>
+        <div class="col-md-12">
+            <div id="price-container">
+                <!-- Default pricing should be in pounds -->
+                <h1>Estimated Recipe Price:</h1>
+                {% if recipe_data.prices %}
+                <p>Cost Per Serving: £{{ recipe_data.prices[1]['overall_cost_per_serving'] }}</p>
+                <p>{{ recipe_data.prices[1] }}</p>
+                <p>Note: These prices are estimates taken from a variety US supermarkets.
+                    Data is provided by Spoonacular.
+                </p>
+                {% else %}
+                <p>NOTE: 404 - Recipe Price Not Found</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 
