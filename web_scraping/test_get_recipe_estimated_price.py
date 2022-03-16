@@ -1,3 +1,5 @@
+# NOTE: TO BE DELETED
+
 from spoonacular_api import SpoonacularAPI
 import configparser
 
@@ -8,10 +10,10 @@ api_key = config.get('api_keys', 'spoonacular_api_key')
 
 test_ingredients_list = [
     '½ small pack coriander, roughly chopped',
-    '600g baby aubergines, sliced into rounds',
-    '3 tbsp olive oil',
-    '2 onions, finely sliced',
-    '2 garlic cloves, crushed',
+    '1 salmon fillet',
+    '½ cup walnuts (50 g), chopped',
+    '¼ cup lemon juice (60 mL), + 3 tablespoons',
+    '½ cup olive oil (120 mL), + 2 tablespoons',
     '1 tsp garam masala',
     '1 tsp turmeric',
     '1 tsp ground coriander',
