@@ -24,6 +24,16 @@
     border: 2px solid rgba(0,0,0,.250) !important;
 }
 
+#ingredient-gbp-cost-div {
+    display: flex;
+}
+#ingredient-gbp-cost-breakdown {
+    margin: 16px auto 8px;
+}
+#ingredient-gbp-cost-div, #ingredient-gbp-cost-breakdown h4 {
+    padding: 0px;
+}
+
 /** Screens larger than 768px which is default breakpoint **/
 @media screen and (min-width: 768px) {
     #recipe-description-title, #recipe-dietary-requirements-title,
