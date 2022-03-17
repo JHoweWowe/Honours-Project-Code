@@ -91,6 +91,7 @@
                   <div class="card-body">
                       <h5 class="card-title">{{ d.title }}</h5>
                       <div class="card-body-details-div">
+                        <p class="card-text">Description: {{ d.description | truncate(150) }}</p>
                         <p class="card-text">Dietary Requirements:
                           {% if d.dietary_requirements | length == 0 %}
                           None
