@@ -1,5 +1,5 @@
 /__pycache__/
 /venv/
-settings.ini
 /web_scraping/__pycache__/
 geckodriver.log
+settings.ini
