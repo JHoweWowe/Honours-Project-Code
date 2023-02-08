@@ -92,6 +92,18 @@ body {
     display: flex;
 }
 
+footer {
+    background-color: #f8f9fa;
+    padding: 8px 0px;
+}
+footer .row {
+    text-align: center;
+}
+#footer-left, #footer-right {
+    text-align: center;
+    margin-top: 16px;
+}
+
 /** Screens larger than 768px which is default breakpoint **/
 @media screen and (min-width: 768px) {
     #nav-title {
@@ -111,5 +123,18 @@ body {
         width: 30%;
         margin: 8px;
         height: 700px;
-    }    
+    }
+    #footer-left {
+        justify-content: center;
+        text-align: left;
+        font-size: 1rem;
+    }
+    #footer-right {
+        justify-content: end;
+        text-align: right;
+        font-size: 1rem;
+    }
+    footer a {
+        margin: 0px 4px;
+    }     
 }

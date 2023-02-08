@@ -7,9 +7,10 @@ if not os.path.exists('settings.ini'):
     config['api_keys'] = {'spoonacular_api_key': ''}
     config['food_recipe_database'] = {
         'food_recipe_database_name': 'db',
-        'food_collection_name': 'bbc_good_food',
-        'username': 's1840358',
-        'password': ''
+        'food_collection_name': 'foodrecipewebsite',
+        'username': '',
+        'password': '',
+        'hostname': 'somemongodb-cluster.randomid.mongodb.net'
     }
     config['web_scrapping_module'] = {
         'base_url': 'https://www.bbcgoodfood.com/recipes/collection/student-recipes',
