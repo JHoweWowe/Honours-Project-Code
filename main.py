@@ -15,6 +15,7 @@ username = config.get('food_recipe_database', 'username')
 password = config.get('food_recipe_database', 'password')
 hostname = config.get('food_recipe_database', 'hostname')
 uri = base_uri + username + ':' + password + '@' + hostname + '/db?retryWrites=true&w=majority'
+uri = 'mongodb://localhost:27017/?readPreference=primary&directConnection=true&ssl=false'
 
 mongo = pymongo.MongoClient(uri)
 

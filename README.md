@@ -13,14 +13,15 @@ For further details, please refer to the Honours Project report found in page 27
 
 # Local Development Setup
 1. Install MongoDB and MongoDBCompass - used to visualize data much more clearly
-2. Open MongoDBCompass and connect it to localhost with port of 27017 (or MongoDBCloud database - lowest tier is free as of Feb 2023)
-3. Create a virtual environment in Python and activate it
+2. Create a virtual environment in Python and activate it
     - `python -m venv venv`
-4. Ensure the Python dependencies from `requirements.txt` are installed in the virtual environment, especially Flask
-5. Execute `setup_settings.py` on console
-6. Go to `settings.ini` and type in respective API and database settings
+3. Ensure the Python dependencies from `requirements.txt` are installed in the virtual environment, especially Flask
+4. Execute `setup_settings.py` on console
+5. Go to `settings.ini` and type in respective API and database settings
     - Database by default is called `db`
     - Collections can either be named `bbcgoodfood` or `tasty`.
+6. Run MongoDB in your local environment and connect it to localhost with port of 27017 (or MongoDBCloud database - lowest tier is free as of Feb 2023)
+7. Run `main.py` - this deploys the Flask server only for **local** development and not production usage.
 
 # Code Structure
 Folders named `static` and `templates` where static files and templates are respectively displayed.
@@ -34,6 +35,7 @@ Tasty website has more flexibility where base url is configured as *https://tast
 The `base_url` of the website to scrape can be configured in the `settings.ini` file
 
 1. Simply run the respective Python website module. Go to cmd and go to the `web_scraping` folder then type `python web_scrapping_module.py`
+2. Ensure the recipes are stored in the MongoDB collections
 
 # Heroku Deployment for Public Usage
 NOTE: Figure how to deploy settings config file securely
