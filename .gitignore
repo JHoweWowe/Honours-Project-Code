@@ -3,3 +3,5 @@
 /web_scraping/__pycache__/
 geckodriver.log
 settings.ini
+/routes/__pycache__/
+.env

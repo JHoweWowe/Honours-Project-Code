@@ -13,7 +13,7 @@
 #recipe-cuisine-title, #recipe-total-cooking-time-title {
     font-size: 1rem;
 }
-#ingredient-title {
+.ingredient-item {
     margin: 0px auto 4px;
     line-height: 1.5;
 }
@@ -24,17 +24,69 @@
     border: 2px solid rgba(0,0,0,.250) !important;
 }
 
-#ingredient-gbp-cost-div {
+.ingredient-gbp-cost-div {
     display: flex;
 }
 #ingredient-gbp-cost-breakdown {
     margin: 16px auto 8px;
 }
-#ingredient-gbp-cost-div, #ingredient-gbp-cost-breakdown h4 {
+.ingredient-gbp-cost-div, #ingredient-gbp-cost-breakdown h4 {
     padding: 0px;
 }
 
-/** Screens larger than 768px which is default breakpoint **/
+/** Options panel **/
+#options-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+#options-container h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+#servings-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+#servings-input {
+    width: 70px;
+}
+
+/** Print button **/
+#print-btn {
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+/** Related recipes **/
+#related-recipes-container {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid #dee2e6;
+}
+#related-recipes-container h2 {
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.related-recipe-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+}
+.related-recipe-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+.related-card-img {
+    height: 180px;
+    object-fit: cover;
+    background-color: #e9ecef;
+}
+
+/** Screens ≥768px **/
 @media screen and (min-width: 768px) {
     #recipe-description-title, #recipe-dietary-requirements-title,
     #recipe-cuisine-title, #recipe-total-cooking-time-title, #accordion-more-info-title {
@@ -43,4 +95,12 @@
     #recipe-data-right-div {
         margin: 0px auto;
     }
+}
+
+/** Print styles — recipe page **/
+@media print {
+    #options-container, #price-container, .accordion,
+    #print-btn, #related-recipes-container { display: none !important; }
+    .ingredient-item { font-size: 11pt; }
+    #directions-div p { font-size: 11pt; }
 }
