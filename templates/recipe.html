@@ -5,26 +5,32 @@
     <div class="row">
         <div class="col-md-12" id="relevant-recipes-title-div">
             <a href="javascript:history.back()">
-                <img src="{{ url_for('static', filename='back_arrow.png') }}" style="width:64px; height:64px">
+                <img src="{{ url_for('static', filename='back_arrow.png') }}" style="width:64px; height:64px" alt="Back">
             </a>
-            <span id="block-title">{% block title %} {{ recipe_data.title }} {% endblock %}</span>
-        </div> 
+            <span id="block-title">{% block title %}{{ recipe_data.title }}{% endblock %}</span>
+            <button onclick="window.print()" class="btn btn-outline-secondary btn-sm" id="print-btn">
+                <i class="bi bi-printer"></i> Print
+            </button>
+        </div>
+
         <div class="col-md-4">
-            <img src="{{ recipe_data.image_url }}" style="width: 100%; height: auto;">
+            <img src="{{ recipe_data.image_url }}" style="width: 100%; height: auto;" alt="{{ recipe_data.title }}" loading="lazy">
         </div>
         <div class="col-md-8" id="recipe-data-right-div">
             <div id="recipe-data-right-inner-div">
                 <h2 id="recipe-description-title"><b>Description:</b> <span>{{ recipe_data.description }}</span></h2>
                 <h2 id="recipe-dietary-requirements-title">
                     <b>Dietary Requirements:</b>
-                    {% for dietary_requirement in recipe_data.dietary_requirements %}
-                    <span>{{ dietary_requirement }},</span>
+                    {% if recipe_data.dietary_requirements %}
+                    {% for dr in recipe_data.dietary_requirements %}
+                    <span>{{ dr }}{% if not loop.last %}, {% endif %}</span>
+                    {% endfor %}
                     {% else %}
                     None
+                    {% endif %}
                 </h2>
-                {% endfor %}
                 <h2 id="recipe-cuisine-title"><b>Cuisine:</b> {{ recipe_data.cuisine }}</h2>
-                <h2 id="recipe-total-cooking-time-title"><b>Total Cooking Time:</b> {{ recipe_data.total_time }} mins</h2>    
+                <h2 id="recipe-total-cooking-time-title"><b>Total Cooking Time:</b> {{ recipe_data.total_time }} mins</h2>
             </div>
         </div>
 
@@ -50,9 +56,9 @@
                           </div>
                           <div class="col-md-12" id="nutrition-div">
                               <h2>Nutrition Data Per Serving:</h2>
-                              {% if recipe_data.nutrition_per_servings is defined %}
+                              {% if recipe_data.nutrition_per_servings %}
                               {% for n in recipe_data.nutrition_per_servings.keys() %}
-                              <span>{{ n }}: {{ recipe_data.nutrition_per_servings[n] }}</span>
+                              <span>{{ n }}: {{ recipe_data.nutrition_per_servings[n] }} &nbsp;</span>
                               {% endfor %}
                               {% endif %}
                           </div>
@@ -63,26 +69,33 @@
         </div>
 
         <div class="col-md-4">
-            <div id="options-container" style="display: none;"> <!-- Temporarily remove -->
-                <h1>Options: [TODO]</h1>
-                <div class="form-check form-switch">
+            <!-- Options: servings adjustment and unit toggle -->
+            <div id="options-container">
+                <h3>Options</h3>
+                <div class="form-check form-switch" id="unit-toggle-div">
                     <input class="form-check-input" type="checkbox" value="Metric" id="flexSwitchCheckChecked" checked>
-                    <label class="form-check-label" for="flexSwitchCheckChecked" id="flexSwitchCheckCheckedLabel"></label>
-                </div> 
-                <div>
+                    <label class="form-check-label" for="flexSwitchCheckChecked" id="flexSwitchCheckCheckedLabel">Metric</label>
+                </div>
+                <div id="servings-control">
                     <label for="servings-input">Servings:</label>
-                    <input type="number" id="servings-input" min="1" max="100" value="{{ recipe_data.default_servings }}">
-                </div>           
+                    <input type="number" id="servings-input" min="1" max="100"
+                           value="{{ recipe_data.default_servings }}"
+                           data-default="{{ recipe_data.default_servings }}">
+                </div>
             </div>
-            <h1>Ingredients:</h1>
-            {% for ingredient in recipe_data.ingredients %}
-            <p id="ingredient-title">{{ ingredient }}</p>
-            {% endfor %}
+
+            <div id="ingredients-list">
+                <h1>Ingredients:</h1>
+                {% for ingredient in recipe_data.ingredients %}
+                <p class="ingredient-item">{{ ingredient }}</p>
+                {% endfor %}
+            </div>
         </div>
+
         <div class="col-md-8">
             <h1>Equipment:</h1>
             {% for e in recipe_data.equipment %}
-            <span>{{ e }}, </span>
+            <span>{{ e }}{% if not loop.last %}, {% endif %}</span>
             {% else %}
             <span>None</span>
             {% endfor %}
@@ -93,35 +106,52 @@
                 {% endfor %}
             </div>
         </div>
+
         <div class="col-md-12">
             <div id="price-container">
-                <!-- Default pricing should be in pounds -->
-                <!-- TODO: Support for GBP is supported -->
                 <h1>Estimated Recipe Prices:</h1>
-                {% if recipe_data.prices[1] %}
+                {% if recipe_data.prices and recipe_data.prices | length > 1 and recipe_data.prices[1] %}
                 <div id="price-container-gbp-costs">
                     <h4><b>Estimated Cost Per Serving: £{{ recipe_data.prices[1]['overall_cost_per_serving'] }}</b></h4>
                     <h4>Total Estimated Cost: £{{ recipe_data.prices[1]['overall_cost'] }}</h4>
                 </div>
-                
                 <div id="ingredient-gbp-cost-breakdown" class="row">
                     <h4>Ingredient Cost Breakdown:</h4>
                     {% for ingredient, cost in recipe_data.prices[1]['ingredients_name_cost_list'].items() %}
-                    <div id="ingredient-gbp-cost-div" class="col-md-4">
+                    <div class="ingredient-gbp-cost-div col-md-4">
                         <p>{{ ingredient }}: </p>
                         <p style="margin-left: 8px;">£{{ cost }}</p>
                     </div>
                     {% endfor %}
                 </div>
-
-                <p>Note: The following data is provided by Spoonacular from a variety of supermarkets
-                    and should only be used as estimates.
-                </p>
+                <p class="text-muted">Note: Prices provided by Spoonacular from a variety of supermarkets and are estimates only.</p>
                 {% else %}
-                <p>NOTE: 404 - Recipe Price Not Found</p>
+                <p>Price data not available for this recipe.</p>
                 {% endif %}
             </div>
         </div>
+
+        <!-- RELATED RECIPES -->
+        {% if related %}
+        <div class="col-md-12" id="related-recipes-container">
+            <h2>Related Recipes</h2>
+            <div class="row">
+                {% for r in related %}
+                <div class="col-md-4">
+                    <div class="card related-recipe-card">
+                        <img src="{{ r.image_url }}" loading="lazy" class="card-img-top related-card-img" alt="{{ r.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ r.title }}</h5>
+                            <p class="card-text">{{ r.total_time }} mins &middot; {{ r.average_rating }}/5</p>
+                            <a href="{{ url_for('recipes.view_recipe', id=r._id) }}" class="btn btn-primary btn-sm">View Recipe</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 </div>
 
