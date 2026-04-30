@@ -71,7 +71,7 @@ body {
 #featured-recipe-container, #relevant-recipe-container {
     margin: 8px auto;
     padding: 8px;
-    height: 650px;
+    height: 600px;
 }
 
 /** Screens larger than 768px which is default breakpoint **/
@@ -87,9 +87,11 @@ body {
     }
     #featured-recipe-container {
         margin: 0px 8px;
+        height: 650px;
     }
     #relevant-recipe-container {
         width: 30%;
         margin: 8px;
+        height: 650px;
     }    
 }

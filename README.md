@@ -1,18 +1,20 @@
 # Server Architecture
 Server architecture design to be published soon
 MongoDB - database used to store and retrieve data
+PyMongo - Python library to integrate database and server
 Server - Flask
 Browser - HTML,CSS,JS,BootStrap (If time allows, use React for scability)
 
 # Setup
-1. Install MongoDB
+1. Install MongoDB and MongoDBCompass - used to visualize data much more clearly
 2. Open MongoDBCompass and connect it to localhost with port of 27017
 3. Ensure Flask is setup properly
-4. Go to `settings.ini` and type in API keys accordingly
+4. Execute `setup_settings.py` on console
+5. Go to `settings.ini` and type in respective API and database settings 
 
 # Execute Server
 1. Ensure MongoDB is running (in background)
-2. Go to bash terminal and write `./run`
+2. Go to Git Bash terminal and execute `./run`
 
 # Web Scrapping
 1. Go to cmd and type `py web_scrapping_module.py`

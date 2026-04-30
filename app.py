@@ -1,12 +1,22 @@
-from flask import Flask, render_template, Response, request, redirect, url_for
+from flask import Flask, render_template, Response, request
 from flask_pymongo import PyMongo, pymongo
 from pymongo import TEXT
 from bson.objectid import ObjectId
 
-import json
+import configparser, json
 
 app = Flask(__name__)
-mongo = PyMongo(app, uri="mongodb://localhost:27017/honours-proj-website-recipes")
+#mongo = PyMongo(app, uri="mongodb://localhost:27017/honours-proj-website-recipes")
+
+config = configparser.ConfigParser()
+config.read('settings.ini')
+
+base_uri = 'mongodb+srv://'
+username = config.get('food_recipe_database', 'username')
+password = config.get('food_recipe_database', 'password')
+uri = base_uri + username + ':' + password + '@honours-project.x6odc.mongodb.net/db?retryWrites=true&w=majority'
+
+mongo = pymongo.MongoClient(uri)
 
 # THIS IS DEFINITELY NOT GOOD PRACTICE - POSSIBLY BASED ON HIGHEST RANKING AND DIETARY REQUIREMENTS???
 featured_recipes_data = list(mongo.db.bbcgoodfood.find({'average_rating': { '$gt': 4.4, '$lt': 5}}).sort('number_of_ratings', -1).limit(3))
