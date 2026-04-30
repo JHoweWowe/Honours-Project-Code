@@ -41,6 +41,14 @@ for recipe in recipes:
     individual_html_recipe_text = requests.get(individual_recipe_url).text
     soup = BeautifulSoup(individual_html_recipe_text, features='html.parser')
 
+    # Obtain rating details - including average rating and number of ratings
+    rating_details = soup.find('div', class_='rating__values').find_all('span', limit=2) # Only obtain average rating & num of ratings
+    average_rating_str = rating_details[0].get_text()
+    average_rating = float(average_rating_str.split(" ")[4]) # Eg: 'A star rating of 4.5 out of 5.'
+
+    number_of_ratings_str = rating_details[1].get_text()
+    number_of_ratings = int(number_of_ratings_str.split(" ")[0])
+
     # Obtain dietary requirements
     dietary_requirements_ul = soup.find('ul', class_='terms-icons-list d-flex post-header__term-icons-list mt-sm hidden-print list list--horizontal')
     dietary_requirements_array = []
@@ -70,6 +78,8 @@ for recipe in recipes:
         "image_url": image_url,
         "total_time": total_time_mins,
         "dietary_requirements": dietary_requirements_array,
+        "average_rating": average_rating,
+        "number_of_ratings": number_of_ratings,
         "ingredients": list_of_ingredients_array,
         "steps": steps_array
     }

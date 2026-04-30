@@ -31,18 +31,22 @@
 
     <!-- FEATURED RECIPES -->
     <div class="container" id="featured-recipes-container">
-        <h1>Featured Recipes:</h1>
         <div class="row" style="margin: 0px auto">
-            {% for d in featured_recipes_data %}
-            <div class="col-md card" style="margin: 0px 8px">
-                <img class="card-img-top" src="{{ d.image_url }}" alt="{{ d.description }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ d.title }}</h5>
-                    <p class="card-text">{{ d.description }}</p>
-                    <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">Go somewhere</a>
+            {% if featured_recipes_data | length > 0 %}
+            <h1>Featured Recipes</h1>
+                {% for d in featured_recipes_data %}
+                <div class="col-md card" style="margin: 0px 8px">
+                    <img class="card-img-top" src="{{ d.image_url }}" alt="{{ d.description }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ d.title }}</h5>
+                        <p class="card-text">Dietary Requirements: {{ d.dietary_requirements }}</p>
+                        <p class="card-text">Average Rating: {{ d.average_rating }}</p>
+                        <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>
+                        <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
+                    </div>
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 
