@@ -11,6 +11,12 @@ body {
 .nav-item {
     font-size: 1.5rem;
 }
+#navbar-quick-links .nav-link {
+    color: rgba(0,0,0,0.8) !important;
+}
+#navbar-quick-links .nav-link:hover {
+    text-decoration: underline;
+}
 
 #outer-search-container {
     background-image: url(../default_image.jpg);

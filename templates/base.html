@@ -28,7 +28,7 @@
             </button>
             
             <div>
-                <div class="collapse navbar-collapse text-right" id="navbarNav">
+                <div class="collapse navbar-collapse text-right" id="navbar-header">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link disabled" href="#">About</a>
@@ -42,16 +42,16 @@
                     </ul>
                 </div>
     
-                <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbar-quick-links">
                     <ul class="navbar-nav ms-auto">
                         <li>
-                            <a class="nav-link disabled" href="#">Quick Munchies</a>
+                            <a class="nav-link" href="{{ url_for('search', q='', time=45, dq='Vegetarian', include='', exclude='', sort='relevance') }}">Eat Your Veggies</a>
                         </li>
                         <li>
-                            <a class="nav-link disabled" href="#">Fast Meal Prep</a>
+                            <a class="nav-link" href="{{ url_for('search', q=query, time=30, dq=dq, include='', exclude='', sort='time') }}">Fast Meal Prep</a>
                         </li>
                         <li>
-                            <a class="nav-link disabled" href="#">Easy and Quick Meals</a>
+                            <a class="nav-link disabled" href="#">Cheap Recipes</a>
                         </li>
                     </ul>
                 </div>
