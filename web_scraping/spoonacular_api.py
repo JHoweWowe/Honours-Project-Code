@@ -67,7 +67,7 @@ class SpoonacularAPI():
         else:
             return None
 
-    # Endpoint call to show estimated price
+    # Endpoint call to return HTML response for estimated recipe price
     def get_recipe_estimated_price(self, api_key, ingredient_list, servings):
         # Set mode, defaultCss, showBacklink, language accordingly
         pass

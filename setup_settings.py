@@ -13,6 +13,7 @@ if not os.path.exists('settings.ini'):
     }
     config['web_scrapping_module'] = {
         'base_url': 'https://www.bbcgoodfood.com/recipes/collection/student-recipes',
-        'page': '1'
+        'page': '1',
+        'q': 'quick'
     }
     config.write(open('settings.ini', 'w'))

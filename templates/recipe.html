@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12" id="relevant-recipes-title-div">
-            <a href="{{ url_for('index') }}">
+            <a href="javascript:history.back()">
                 <img src="{{ url_for('static', filename='back_arrow.png') }}" style="width:64px; height:64px">
             </a>
             <span id="block-title">{% block title %} {{ recipe_data.title }} {% endblock %}</span>
@@ -41,7 +41,7 @@
                           <div class="col-md-6" id="credits-div">
                               <h2>Credits:</h2>
                               <h5>Author: {{ recipe_data.author }}</h5>
-                              <h5>Website Used: BBCGoodFood</h5>
+                              <h5>Website Used: BBCGoodFood / Tasty</h5>
                           </div>
                           <div class="col-md-6" id="ratings-div">
                               <h2>Rating:</h2>
@@ -50,9 +50,11 @@
                           </div>
                           <div class="col-md-12" id="nutrition-div">
                               <h2>Nutrition Data Per Serving:</h2>
+                              {% if recipe_data.nutrition_per_servings is defined %}
                               {% for n in recipe_data.nutrition_per_servings.keys() %}
                               <span>{{ n }}: {{ recipe_data.nutrition_per_servings[n] }}</span>
                               {% endfor %}
+                              {% endif %}
                           </div>
                       </div>
                     </div>

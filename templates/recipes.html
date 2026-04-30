@@ -6,7 +6,7 @@
         <div class="row" id="relevant-recipes-row-div">
             <div id="relevant-recipes-header-block-div">
                 <div class="col-md-12" id="relevant-recipes-title-div">
-                    <a href="{{ url_for('index') }}">
+                    <a href="javascript:history.back()">
                         <img src="{{ url_for('static', filename='back_arrow.png') }}" style="width:64px; height:64px">
                     </a>
                     <span id="block-title">{% block title %}Relevant Recipes{% endblock %}</span>
