@@ -7,9 +7,24 @@ client = MongoClient('localhost', 27017)
 recipe_db = client['honours-proj-website-recipes']
 test_recipe_collection = recipe_db['bbcgoodfood'] # By default should only collect recipes from BBCGoodFood
 
+# Setup API
+import requests, configparser, os
+from spoonacular_api import SpoonacularAPI
+
+spoonacular_API = SpoonacularAPI()
+config = configparser.ConfigParser()
+# Handle Settings initialization file
+if not os.path.exists('settings.ini'):
+    config['api_keys'] = {'spoonacular_api_key': 'write_your_api_key_here'}
+    config.write(open('settings.ini', 'w'))
+else:
+    config.read('settings.ini')
+
+api_key = config.get('api_keys', 'spoonacular_api_key')
+
+
 # Setup basic web scrapping
 from bs4 import BeautifulSoup
-import requests
 
 # TODO: Web scrape multiple recipes from student recipes and obtain URL for each if applicable
 base_url = 'https://www.bbcgoodfood.com/recipes/collection/student-recipes'
@@ -69,7 +84,11 @@ for recipe in recipes:
     steps_array = []
     test2 = ingredients.find('ul', class_='grouped-list__list list')
     for t2 in test2:
-        steps_array.append(t2.p.text)
+        steps_array.append(str(t2.p.text) + ' ')
+
+    # Analyze recipe instructions (aka get equipment)
+    steps_str = ''.join(steps_array)
+    equipment_list = spoonacular_API.analyze_recipe_instructions(api_key, steps_str)
 
     # TODO: Add prep, cook & total time and 
     recipe_json = {
@@ -81,7 +100,8 @@ for recipe in recipes:
         "average_rating": average_rating,
         "number_of_ratings": number_of_ratings,
         "ingredients": list_of_ingredients_array,
-        "steps": steps_array
+        "steps": steps_array,
+        "equipment": equipment_list
     }
 
     recipes_json_list.append(recipe_json)
