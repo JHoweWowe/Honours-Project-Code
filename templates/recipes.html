@@ -4,6 +4,9 @@
 {% block content %}
     <!-- Should have back button?? -->
     <h1>{% block title %} Relevant Recipes {% endblock %}</h1>
+    <a href="{{ url_for('index') }}">
+        <img src="../static/back_arrow.png" style="width:64px; height:64px;">
+    </a>
     <div style="width: 75%; margin: auto">
         {% for d in data %}
         <div style="padding: 10px; background-color: #EEE; margin: 20px">
@@ -14,6 +17,10 @@
             <!-- Change size -->
             <h5>Dietary Requirements: {{ d.dietary_requirements }} </h5>
             <h5>Total Cooking Time: {{ d.total_time }} </h5>
+        </div>
+        {% else %}
+        <div>
+            <h1>No recipes found!</h1>
         </div>
         {% endfor %}
     </div>
