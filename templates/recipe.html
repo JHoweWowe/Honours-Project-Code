@@ -3,14 +3,16 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <a href="{{ url_for('index') }} ">
-            <img src="../static/back_arrow.png" style="width: 64px; height: 64px;">
-        </a>
+        <div class="col-md-12" id="relevant-recipes-title-div">
+            <a href="{{ url_for('index') }}">
+                <img src="../static/back_arrow.png" style="width:64px; height:64px">
+            </a>
+            <span id="block-title">{% block title %} {{ recipe_data.title }} {% endblock %}</span>
+        </div> 
         <div class="col-md-4">
             <img src="{{ recipe_data.image_url }}" style="width: 100%; height: auto;">
         </div>
         <div class="col-md-8">
-            <h1>Title: {{ recipe_data.title }}</h1>
             <h2>Description: {{ recipe_data.description }}</h2>
             <h2>Dietary Requirements: </h2>
             {% for dietary_requirement in recipe_data.dietary_requirements %}

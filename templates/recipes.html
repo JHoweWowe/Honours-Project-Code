@@ -1,27 +1,33 @@
-<!-- THIS IS JUST AN EXAMPLE -->
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- Should have back button?? -->
-    <h1>{% block title %} Relevant Recipes {% endblock %}</h1>
-    <a href="{{ url_for('index') }}">
-        <img src="../static/back_arrow.png" style="width:64px; height:64px;">
-    </a>
-    <div style="width: 75%; margin: auto">
-        {% for d in data %}
-        <div style="padding: 10px; background-color: #EEE; margin: 20px">
-            <img src="{{ d.image_url }}">
-            <a href="{{ url_for('view_recipe', id = d._id) }}">
-                <h1> {{ d.title }} </h1>
-            </a>
-            <!-- Change size -->
-            <h5>Dietary Requirements: {{ d.dietary_requirements }} </h5>
-            <h5>Total Cooking Time: {{ d.total_time }} </h5>
+
+    <div class="container" id="relevant-recipes-container">
+        <div class="row" id="relevant-recipes-row-div">
+            <div class="col-md-12" id="relevant-recipes-title-div">
+                <a href="{{ url_for('index') }}">
+                    <img src="../static/back_arrow.png" style="width:64px; height:64px">
+                </a>
+                <span id="block-title">{% block title %}Relevant Recipes{% endblock %}</span>
+            </div> 
+            <!-- Check for just size 1 -->
+            {% for d in data %}
+            <div class="col-md-6 card" id="relevant-recipe-container">
+                <img class="card-img-top" src="{{ d.image_url }}">
+                <div class="card-body">
+                    <a href="{{ url_for('view_recipe', id = d._id) }}">
+                        <h5 class="card-title"> {{ d.title }} </h5>
+                    </a>
+                    <p class="card-text">Dietary Requirements: {{ d.dietary_requirements }} </p>
+                    <p>Total Cooking Time: {{ d.total_time }} mins</p>        
+                </div>
+            </div>
+            {% else %}
+            <div class="col-md-12">
+                <h1>None Found!</h1>
+            </div>
+            {% endfor %}
         </div>
-        {% else %}
-        <div>
-            <h1>No recipes found!</h1>
-        </div>
-        {% endfor %}
     </div>
+
 {% endblock %}
