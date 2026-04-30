@@ -32,15 +32,23 @@
                       </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                      <div class="accordion-body">
-                          <div id="credits-div">
-                              <h2>Credits</h2>
+                      <div class="row accordion-body">
+                          <div class="col-md-6" id="credits-div">
+                              <h2>Credits:</h2>
                               <h5>Author: {{ recipe_data.author }}</h5>
                               <h5>Website Used: BBCGoodFood</h5>
                           </div>
-                          <h2>Average Rating: {{ recipe_data.average_rating }}</h2>
-                          <h2>Number of Ratings: {{ recipe_data.number_of_ratings }}</h2>
-                          <h2>Nutriention Information??</h2>
+                          <div class="col-md-6" id="ratings-div">
+                              <h2>Rating:</h2>
+                              <h5>Average Rating: {{ recipe_data.average_rating }}</h5>
+                              <h5>Number of Ratings: {{ recipe_data.number_of_ratings }}</h5>
+                          </div>
+                          <div class="col-md-12" id="nutrition-div">
+                              <h2>Nutrition Data Per Serving:</h2>
+                              {% for n in recipe_data.nutrition_per_servings.keys() %}
+                              <span>{{ n }}: {{ recipe_data.nutrition_per_servings[n] }}</span>
+                              {% endfor %}
+                          </div>
                       </div>
                     </div>
                 </div>
@@ -48,18 +56,38 @@
         </div>
 
         <div class="col-md-4">
+            <div id="options-container">
+                <h1>Options: [TODO]</h1>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" value="Metric" id="flexSwitchCheckChecked" checked>
+                    <label class="form-check-label" for="flexSwitchCheckChecked" id="flexSwitchCheckCheckedLabel"></label>
+                </div> 
+                <div>
+                    <label for="servings-input">Servings:</label>
+                    <input type="number" id="servings-input" min="1" max="100" value="{{ recipe_data.default_servings }}">
+                </div>           
+            </div>
             <h1>Ingredients:</h1>
             {% for ingredient in recipe_data.ingredients %}
             <p>{{ ingredient }}</p>
             {% endfor %}
         </div>
         <div class="col-md-8">
-            <h1>Directions</h1>
+            <h1>Equipment:</h1>
+            {% for e in recipe_data.equipment %}
+            <span>{{ e }}, </span>
+            {% else %}
+            <span>None</span>
+            {% endfor %}
+            <h1>Directions:</h1>
             {% for step in recipe_data.steps %}
             <p>{{ step }}</p>
             {% endfor %}
         </div>
     </div>
 </div>
+
+<!-- SCRIPT -->
+<script src="../static/js/recipe.js"></script>
 
 {% endblock %}
