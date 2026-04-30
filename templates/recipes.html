@@ -15,7 +15,7 @@
                     <span id="block-title">Recipes</span>
                     {% endif %}
                 </div>
-                <div class="dropdown">
+                <div id="sort-recipe-form-div" class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                       Sort By:
                     </button>
@@ -32,9 +32,12 @@
             <!-- Check for just size 1 -->
             {% for d in data %}
             <div class="col-md-4 card" id="relevant-recipe-container">
-                <img class="card-img" src="{{ d.image_url }}">
+                <a href="{{ url_for('view_recipe', id = d._id) }}">
+                    <img class="card-img" src="{{ d.image_url }}">
+                </a>
                 <div class="card-body">
                     <h5 class="card-title"> {{ d.title.capitalize() }} </h5>
+                    <p class="card-description">Description: {{ d.description | truncate(75) }}</p>
                     <p class="card-text">Dietary Requirements:
                         {% if d.dietary_requirements | length == 0 %}
                         None
@@ -42,7 +45,9 @@
                         {{ d.dietary_requirements }}
                         {% endif %}
                     </p>
-                    <p>Total Cooking Time: {{ d.total_time }} mins</p>
+                    <p class="card-text">Total Cooking Time: {{ d.total_time }} mins</p>
+                    <p class="card-text">Average Rating: {{ d.average_rating }}</p>
+                    <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>
                     <div class="recipe-more-info-div">
                         <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
                     </div>        
@@ -51,6 +56,7 @@
             {% else %}
             <div class="col-md-12">
                 <h1>None Found!</h1>
+                <h2>Please try a different search.</h2>
             </div>
             {% endfor %}
         </div>
