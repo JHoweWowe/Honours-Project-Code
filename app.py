@@ -22,7 +22,7 @@ def search():
     try:
         collection = []
         sample_dict_size = dict()
-        sample_dict_size["$sample"] = {"size" : 3} # RANDOM SAMPLE SIZE - can easily be customizable
+        sample_dict_size["$sample"] = {"size" : 4} # RANDOM SAMPLE SIZE - can easily be customizable
         
         match_requirements = dict()
         match_inner_requirements = dict()

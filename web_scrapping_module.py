@@ -22,7 +22,6 @@ else:
 
 api_key = config.get('api_keys', 'spoonacular_api_key')
 
-
 # Setup basic web scrapping
 from bs4 import BeautifulSoup
 
@@ -56,6 +55,16 @@ for recipe in recipes:
     individual_html_recipe_text = requests.get(individual_recipe_url).text
     soup = BeautifulSoup(individual_html_recipe_text, features='html.parser')
 
+    # Obtain author - for credability
+    author_div = soup.find('div', class_='author-link')
+    author_str = author_div.find('a', class_='link link--styled').get_text()
+
+    # Obtain default servings
+    some_ul = soup.find('ul', class_='post-header__row post-header__planning list list--horizontal')
+    default_servings_ul = some_ul.find('li', class_='mt-sm list-item')
+    default_servings_text = default_servings_ul.get_text()
+    default_servings = int(default_servings_text.split(" ")[1])
+
     # Obtain rating details - including average rating and number of ratings
     rating_details = soup.find('div', class_='rating__values').find_all('span', limit=2) # Only obtain average rating & num of ratings
     average_rating_str = rating_details[0].get_text()
@@ -64,12 +73,28 @@ for recipe in recipes:
     number_of_ratings_str = rating_details[1].get_text()
     number_of_ratings = int(number_of_ratings_str.split(" ")[0])
 
+    # Obtain nutrition details
+    nutrition_per_serving_details_table = soup.find('table', class_='key-value-blocks hidden-print mt-xxs')
+    table1_contents = nutrition_per_serving_details_table.contents[2]
+    table2_contents = nutrition_per_serving_details_table.contents[3]
+    nutrition_per_serving_details = dict()
+    for content in table1_contents:
+        key = content.contents[0].get_text()
+        value = content.contents[1].get_text()
+        nutrition_per_serving_details[key] = value
+    for content in table2_contents:
+        key = content.contents[0].get_text()
+        value = content.contents[1].get_text()
+        nutrition_per_serving_details[key] = value
+
     # Obtain dietary requirements
     dietary_requirements_ul = soup.find('ul', class_='terms-icons-list d-flex post-header__term-icons-list mt-sm hidden-print list list--horizontal')
     dietary_requirements_array = []
+    allowed_dietary_requirements_array = ['Vegan', 'Vegetarian', 'Gluten-free'] # To be refactored more to allow more dq options
     if dietary_requirements_ul is not None:
         for t in dietary_requirements_ul:
-            dietary_requirements_array.append(t.span.get_text())
+            if t.span.get_text() in allowed_dietary_requirements_array:
+                dietary_requirements_array.append(t.span.get_text())
 
     individual_recipe_itself = soup.find('div', class_='post recipe')
     ingredients = individual_recipe_itself.find('div', class_ = 'row recipe__instructions')
@@ -96,7 +121,10 @@ for recipe in recipes:
         "description": description,
         "image_url": image_url,
         "total_time": total_time_mins,
+        "author": author_str,
+        "default_servings": default_servings,
         "dietary_requirements": dietary_requirements_array,
+        "nutrition_per_servings": nutrition_per_serving_details,
         "average_rating": average_rating,
         "number_of_ratings": number_of_ratings,
         "ingredients": list_of_ingredients_array,

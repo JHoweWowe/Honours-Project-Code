@@ -18,7 +18,13 @@
                     <a href="{{ url_for('view_recipe', id = d._id) }}">
                         <h5 class="card-title"> {{ d.title }} </h5>
                     </a>
-                    <p class="card-text">Dietary Requirements: {{ d.dietary_requirements }} </p>
+                    <p class="card-text">Dietary Requirements:
+                        {% if d.dietary_requirements | length == 0 %}
+                        None
+                        {% else %}
+                        {{ d.dietary_requirements }}
+                        {% endif %}
+                    </p>
                     <p>Total Cooking Time: {{ d.total_time }} mins</p>        
                 </div>
             </div>
