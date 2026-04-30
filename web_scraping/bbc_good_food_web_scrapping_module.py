@@ -2,7 +2,7 @@
 from flask_pymongo import pymongo
 from web_scrapping_module_helper import WebScrapperHelper
 
-import requests, configparser, os
+import requests, configparser
 from spoonacular_api import SpoonacularAPI
 
 # Setup Configuration for API and MongoDB
@@ -17,7 +17,8 @@ test_recipe_collection_str = config.get('food_recipe_database', 'food_collection
 
 username = config.get('food_recipe_database', 'username')
 password = config.get('food_recipe_database', 'password')
-uri = base_uri + username + ':' + password + '@honours-project.x6odc.mongodb.net/db?retryWrites=true&w=majority'
+hostname = config.get('food_recipe_database', 'hostname')
+uri = base_uri + username + ':' + password + '@' + hostname + '/db?retryWrites=true&w=majority'
 
 mongo_client = pymongo.MongoClient(uri)
 recipe_db = mongo_client[db_name_str]
@@ -28,7 +29,7 @@ api_key = config.get('api_keys', 'spoonacular_api_key')
 # Setup basic web scrapping
 from bs4 import BeautifulSoup
 
-base_url = 'https://www.bbcgoodfood.com/recipes/collection/student-recipes'
+base_url = config.get('web_scrapping_module', 'base_url')
 page_number_str = config.get('web_scrapping_module', 'page')
 url_query = '?' + 'page=' + page_number_str
 url = base_url + url_query
@@ -45,7 +46,7 @@ web_scrapper_helper = WebScrapperHelper()
 for recipe in recipes:
     specific_recipe_url = recipe.find('a', class_ = 'link d-block').get('href')
 
-    title = recipe.find('h2', class_ = 'd-inline heading-4').text
+    title = recipe.find('h2', class_ = 'heading-4').text
     description = recipe.find('p', class_ = 'card__description d-block body-copy-small').text
     
     image_url = recipe.find('img', class_ = 'image__img')['src']

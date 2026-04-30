@@ -13,7 +13,9 @@ config.read('settings.ini')
 base_uri = 'mongodb+srv://'
 username = config.get('food_recipe_database', 'username')
 password = config.get('food_recipe_database', 'password')
-uri = base_uri + username + ':' + password + '@honours-project.x6odc.mongodb.net/db?retryWrites=true&w=majority'
+hostname = config.get('food_recipe_database', 'hostname')
+uri = base_uri + username + ':' + password + '@' + hostname + '/db?retryWrites=true&w=majority'
+uri = 'mongodb://localhost:27017/?readPreference=primary&directConnection=true&ssl=false'
 
 mongo = pymongo.MongoClient(uri)
 

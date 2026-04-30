@@ -16,7 +16,8 @@ test_recipe_collection_str = config.get('food_recipe_database', 'food_collection
 
 username = config.get('food_recipe_database', 'username')
 password = config.get('food_recipe_database', 'password')
-uri = base_uri + username + ':' + password + '@honours-project.x6odc.mongodb.net/db?retryWrites=true&w=majority'
+hostname = config.get('food_recipe_database', 'hostname')
+uri = base_uri + username + ':' + password + '@' + hostname + '/db?retryWrites=true&w=majority'
 
 mongo_client = pymongo.MongoClient(uri)
 recipe_db = mongo_client[db_name_str]
@@ -30,7 +31,7 @@ from selenium import webdriver # Required for obtaining image HTML, additionally
 #from selenium.webdriver.common.keys import Keys # Used for controlling script for easier usage
 import chromedriver_binary # TODO: Chrome version changes - may require a different version
 
-base_url = 'https://tasty.co/search'
+base_url = config.get('web_scrapping_module', 'base_url')
 page_number_str = config.get('web_scrapping_module', 'page')
 url_query = '?' + 'q=' + config.get('web_scrapping_module', 'q') + '&' + 'sort=popular'
 url = base_url + url_query
