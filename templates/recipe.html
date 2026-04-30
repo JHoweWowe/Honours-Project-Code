@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>This is a test for an individual recipe page</h1>
+        <h1>{{ id }}</h1>
+        <h2>{{ recipe_data }}</h2> 
+        <h5>Ingredients:</h5>
+        {% for ingredient in recipe_data.ingredients %}
+            <h6> {{ ingredient }}</h6>
+        {% endfor %}
+    </div>
+{% endblock %}
