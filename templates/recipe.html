@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12" id="relevant-recipes-title-div">
             <a href="{{ url_for('index') }}">
-                <img src="../static/back_arrow.png" style="width:64px; height:64px">
+                <img src="{{ url_for('static', filename='back_arrow.png') }}" style="width:64px; height:64px">
             </a>
             <span id="block-title">{% block title %} {{ recipe_data.title }} {% endblock %}</span>
         </div> 
