@@ -2,7 +2,7 @@
 # Following class sets up Spoonacular API and handles calls
 
 from bs4 import BeautifulSoup # Required for parsing HTML text for recipe estimated price
-import re, requests, unidecode # unidecode used to decode unexpected text
+import re, requests
 
 class SpoonacularAPI():
 

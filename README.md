@@ -5,7 +5,7 @@ PyMongo - Python library to integrate database and server
 Server - Flask
 Browser - HTML,CSS,JS,BootStrap (If time allows, use React for scability)
 
-# Setup
+# Local Development Setup
 1. Install MongoDB and MongoDBCompass - used to visualize data much more clearly
 2. Open MongoDBCompass and connect it to localhost with port of 27017
 3. Ensure Flask is setup properly
@@ -27,12 +27,9 @@ NOTE: Figure how to deploy settings config file securely
 5. Add `settings.ini` to `.gitignore`
 
 # Web Scrapping
-NOTE: Installation of Selenium and Google Chrome version is used for scraping data locally
+NOTE: Installation of Selenium and Google Chrome version is used for scraping data locally on the database.
 Therefore it should ideally be done on a personal local machine.
 1. Go to cmd and go to the `web_scraping` folder then type `python web_scrapping_module.py`
 
 # Code Structure
 Folders named `static` and `templates` where static files and templates are displayed
-
-TODO:
-Will be updated more later for report purposes

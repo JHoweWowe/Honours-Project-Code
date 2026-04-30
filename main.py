@@ -28,7 +28,6 @@ def index():
     return render_template('index.html', featured_recipes_data = featured_recipes_data)
 
 # Order - $match, $sort, $group
-# TODO: Refactor URL routing
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     collection = []
