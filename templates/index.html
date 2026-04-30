@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="container-fluid">
-    <h1>{% block title %} Find Recipes {% endblock %}</h1>
 
-    <h1>Quick Search: </h1>
+  <div class="container" id="recipes-container">
+    <h1>{% block title %} Find Recipes {% endblock %}</h1>
   
     <form id="search-recipe-form" action="/" method="post">
 
@@ -17,12 +16,23 @@
           </h2>
           <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
             <div class="accordion-body">
-              <h3>Cooking Time [Test]:</h3>
-              <select name="cooking-time">
-                <option value="">Select...</option>
-                <option value="30 mins">30 mins</option>
-                <option value="50 mins">50 mins</option>
-              </select>        
+              <div id="total-cooking-time-container">
+                <h3>Cooking Time [Should be max]:</h3>
+                <select name="total-cooking-time">
+                  <option value="">Select...</option>
+                  <option value="30">30 mins</option>
+                  <option value="50">50 mins</option>
+                </select>          
+              </div>
+              <div id="dietary-requirements-container">
+                <h3>Dietary Requirements:</h3>
+                <select name="dietary-requirements-dropdown" multiple="multiple">
+                  <option value="">Select...</option>
+                  <option value="Vegetarian">Vegetarian</option>
+                  <option value="Vegan">Vegan</option>
+                  <option value="Gluten-free">Gluten-Free</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
