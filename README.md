@@ -8,10 +8,11 @@ This project received an First Class equivalent grade. While there are minor iss
 * PyMongo - Python library to integrate database and server
 * Server - Flask
 * Browser - HTML,CSS,JS,BootStrap (If time allows, use React for scability)
+* Cloud - Heroku
 
 For further details, please refer to the Honours Project report found in page 27 onwards.
 
-# Local Development Setup
+# Local Development + Setup + Deployment
 1. Install MongoDB and MongoDBCompass - used to visualize data much more clearly
 2. Create a virtual environment in Python and activate it
     - `python -m venv venv`
@@ -45,3 +46,13 @@ NOTE: Figure how to deploy settings config file securely
 4. Check in `requirements.txt` file to ensure Python dependencies are installed
 5. Execute `git push heroku master` on your terminal
 6. Add `settings.ini` to `.gitignore`
+
+# Raising PR for changes
+1. Conduct the following tests, review your changes in local environment and any additional changes
+ - Basic Test Verification:
+    - Test search pagination: verify prev/next buttons work and results are consistent.
+    - Test auth flow end-to-end: register → login → submit recipe → logout → login → see submitted recipe.
+    - Test pricing sort: search any term, sort by price, confirm ascending order.
+    - Test nearby stores: open recipe page, click "Find near me", confirm browser prompts for location and returns store list.
+    - Test on mobile (Chrome DevTools) after each UI change to check responsive layout.
+2. Raise the PR to master from your feature branch

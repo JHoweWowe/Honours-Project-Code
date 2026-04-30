@@ -33,33 +33,25 @@
                           <div class="slidecontainer">
                             <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="time">
                             <p><span id="cooking-time-span-value"></span> mins</p>
-                          </div>       
+                          </div>
                         </div>
                         <div class="col-md-6" id="dietary-requirements-container">
                           <h3>Dietary Requirements:</h3>
                           <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="Vegetarian" id="vegetarian-checkbox" name="dq">
-                            <label class="form-check-label" for="vegetarian-checkbox">
-                              Vegetarian
-                            </label>
+                            <label class="form-check-label" for="vegetarian-checkbox">Vegetarian</label>
                           </div>
                           <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="Vegan" id="vegan-checkbox" name="dq">
-                            <label class="form-check-label" for="vegan-checkbox">
-                              Vegan
-                            </label>
+                            <label class="form-check-label" for="vegan-checkbox">Vegan</label>
                           </div>
                           <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="Gluten-free" id="gluten-free-checkbox" name="dq">
-                            <label class="form-check-label" for="gluten-free-checkbox">
-                              Gluten-Free
-                            </label>
+                            <label class="form-check-label" for="gluten-free-checkbox">Gluten-Free</label>
                           </div>
                           <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="Pescatarian" id="pescatarian-checkbox" name="dq">
-                            <label class="form-check-label" for="pescatarian-checkbox">
-                              Pescatarian
-                            </label>
+                            <label class="form-check-label" for="pescatarian-checkbox">Pescatarian</label>
                           </div>
                         </div>
                         <div class="col-md-12" id="ingredients-container">
@@ -87,23 +79,29 @@
             </div>
               {% for d in featured_recipes_data %}
               <div class="col-md card" id="featured-recipe-container">
-                  <img class="card-img" src="{{ d.image_url }}" alt="{{ d.description }}">
+                  <img class="card-img" src="{{ d.image_url }}" alt="{{ d.title }}" loading="lazy">
                   <div class="card-body">
                       <h5 class="card-title">{{ d.title }}</h5>
+                      {% if d.cuisine %}
+                      <span class="badge bg-secondary cuisine-badge">{{ d.cuisine }}</span>
+                      {% endif %}
+                      {% if d.prices and d.prices | length > 1 and d.prices[1] %}
+                      <span class="badge bg-success price-badge">£{{ "%.2f"|format(d.prices[1].overall_cost_per_serving) }}/person</span>
+                      {% endif %}
                       <div class="card-body-details-div">
                         <p class="card-text">Description: {{ d.description | truncate(150) }}</p>
                         <p class="card-text">Dietary Requirements:
                           {% if d.dietary_requirements | length == 0 %}
                           None
                           {% else %}
-                          {{ d.dietary_requirements }}
+                          {{ d.dietary_requirements | join(', ') }}
                           {% endif %}
                         </p>
                         <p class="card-text">Average Rating: {{ d.average_rating }} / 5</p>
-                        <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>  
+                        <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>
                       </div>
                       <div class="recipe-more-info-div">
-                        <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
+                        <a href="{{ url_for('recipes.view_recipe', id=d._id) }}" class="btn btn-primary">More Info</a>
                       </div>
                   </div>
               </div>
@@ -112,7 +110,19 @@
         </div>
     </div>
 
+    <!-- BROWSE BY CUISINE -->
+    {% if cuisines %}
+    <div class="container" id="cuisine-browse-container">
+        <h2 id="cuisine-browse-title">Browse by Cuisine</h2>
+        <div id="cuisine-pills">
+            {% for cuisine in cuisines %}
+            <a href="{{ url_for('main.search', cuisine=cuisine, sort='relevance') }}" class="cuisine-pill">{{ cuisine }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Script -->
     <script src="{{ url_for('static', filename='index.js') }}"></script>
-    
+
 {% endblock %}
