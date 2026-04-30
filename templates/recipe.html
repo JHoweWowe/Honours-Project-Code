@@ -24,7 +24,7 @@
         </div>
 
         <div class="col-md-12">
-            <div class="accordion" id="recipeMoreInformationExample">
+            <div class="accordion" id="recipeMoreInformationAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
                       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -33,6 +33,11 @@
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                       <div class="accordion-body">
+                          <div id="credits-div">
+                              <h2>Credits</h2>
+                              <h5>Author: {{ recipe_data.author }}</h5>
+                              <h5>Website Used: BBCGoodFood</h5>
+                          </div>
                           <h2>Average Rating: {{ recipe_data.average_rating }}</h2>
                           <h2>Number of Ratings: {{ recipe_data.number_of_ratings }}</h2>
                           <h2>Nutriention Information??</h2>
