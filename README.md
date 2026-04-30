@@ -48,6 +48,11 @@ NOTE: Figure how to deploy settings config file securely
 5. Execute `git push heroku master` on your terminal
 6. Add `settings.ini` to `.gitignore`
 
+Heroku Configuration Setup Before Deploying:
+heroku config:set FOOD_RECIPE_DATABASE_USERNAME=your_username
+  FOOD_RECIPE_DATABASE_PASSWORD=your_password FOOD_RECIPE_DATABASE_HOSTNAME=your_hostname -a
+  <your-app-name>
+
 # Raising PR for changes
 1. Conduct the following tests, review your changes in local environment and any additional changes
  - Basic Test Verification:

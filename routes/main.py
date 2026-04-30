@@ -5,7 +5,7 @@ from extensions import cache
 
 bp = Blueprint('main', __name__)
 
-PER_COLLECTION = 6  # recipes per collection per page (12 total)
+PER_PAGE = 6
 
 
 @bp.route('/', methods=['GET'])
@@ -46,7 +46,7 @@ def search():
         except ValueError:
             pass
 
-    dq_list = request.args.getlist('dq')
+    dq_list = [d for d in request.args.getlist('dq') if d.strip()]
     if dq_list:
         match['dietary_requirements'] = {'$in': dq_list}
 
@@ -80,28 +80,30 @@ def search():
 
     match_stage = [{'$match': match}] if match else []
 
-    sort_map = {
-        'rating':     {'$sort': {'average_rating': -1}},
-        'popularity': {'$sort': {'number_of_ratings': -1}},
-        'time':       {'$sort': {'total_time': 1}},
-        'price':      {'$sort': {'prices.1.overall_cost_per_serving': 1}},
-    }
-    sort_stage = [sort_map[sort]] if sort in sort_map else []
+    # Fetch all matching docs from both collections then sort and paginate in Python.
+    # Per-collection DB pagination can never give a globally correct sort order when
+    # the two collections have different distributions of the sort field.
+    bbc_all = list(mongo.db.bbcgoodfood.aggregate(match_stage))
+    tasty_all = list(mongo.db.tasty.aggregate(match_stage))
+    data_all = bbc_all + tasty_all
 
-    skip = (page - 1) * PER_COLLECTION
-    paginate = [{'$skip': skip}, {'$limit': PER_COLLECTION}]
+    if sort == 'rating':
+        data_all.sort(key=lambda d: float(d.get('average_rating') or 0), reverse=True)
+    elif sort == 'popularity':
+        data_all.sort(key=lambda d: int(d.get('number_of_ratings') or 0), reverse=True)
+    elif sort == 'time':
+        data_all.sort(key=lambda d: float(d.get('total_time') or float('inf')))
+    elif sort == 'price':
+        def _price_key(d):
+            try:
+                return float(d['prices'][1]['overall_cost_per_serving'])
+            except (KeyError, IndexError, TypeError):
+                return float('inf')
+        data_all.sort(key=_price_key)
 
-    pipeline = match_stage + sort_stage + paginate
-    count_pipeline = match_stage + [{'$count': 'n'}]
-
-    bbc_count = next(iter(mongo.db.bbcgoodfood.aggregate(count_pipeline)), {}).get('n', 0)
-    tasty_count = next(iter(mongo.db.tasty.aggregate(count_pipeline)), {}).get('n', 0)
-    total_pages = max(1, math.ceil(max(bbc_count, tasty_count) / PER_COLLECTION))
-
-    data = (
-        list(mongo.db.bbcgoodfood.aggregate(pipeline))
-        + list(mongo.db.tasty.aggregate(pipeline))
-    )
+    total_pages = max(1, math.ceil(len(data_all) / PER_PAGE))
+    page = min(page, total_pages)
+    data = data_all[(page - 1) * PER_PAGE: page * PER_PAGE]
 
     return render_template(
         'recipes.html',

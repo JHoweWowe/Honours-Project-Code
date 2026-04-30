@@ -14,7 +14,8 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;700;900&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;700;900&family=Roboto:wght@400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;700;900&family=Roboto:wght@400&display=swap" rel="stylesheet"></noscript>
 </head>
 
 <body>
@@ -32,34 +33,29 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div>
-                <div class="collapse navbar-collapse text-right" id="navbar-header">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#">Sign In</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="collapse navbar-collapse" id="navbar-quick-links">
-                    <ul class="navbar-nav ms-auto">
-                        <li>
-                            <a class="nav-link" href="{{ url_for('main.search', q='', time=45, dq='Vegetarian', include='', exclude='', sort='relevance') }}">Eat Your Veggies</a>
-                        </li>
-                        <li>
-                            <a class="nav-link" href="{{ url_for('main.search', q='', time=30, dq='', include='', exclude='', sort='time') }}">Fast Meal Prep</a>
-                        </li>
-                        <li>
-                            <a class="nav-link" href="{{ url_for('main.search', q='', time=0, dq='', include='', exclude='', sort='price') }}">Cheap Recipes</a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav flex-row flex-wrap">
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Sign In</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav flex-row flex-wrap">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.search', q='', time=45, dq='Vegetarian', include='', exclude='', sort='relevance') }}">Eat Your Veggies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.search', q='', time=30, dq='', include='', exclude='', sort='time') }}">Fast Meal Prep</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.search', q='', time=0, dq='', include='', exclude='', sort='price') }}">Cheap Recipes</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -83,9 +79,9 @@
     </footer>
 
     <!-- Optional JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <script defer src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
 
     <script>
         // Show page loader when navigating away

@@ -40,13 +40,31 @@ body {
     font-size: 1.5rem;
 }
 .nav-item {
-    font-size: 1.5rem;
+    font-size: 1rem;
 }
-#navbar-quick-links .nav-link {
+#navbarNav .nav-link {
     color: rgba(0,0,0,0.8) !important;
 }
-#navbar-quick-links .nav-link:hover {
+#navbarNav .nav-link:hover {
     text-decoration: underline;
+}
+
+/** Mobile navbar: col-6 style grid with spacing **/
+@media screen and (max-width: 767px) {
+    #navbarNav {
+        padding: 0.5rem 0;
+    }
+    #navbarNav .nav-item {
+        flex: 0 0 50%;
+    }
+    #navbarNav .nav-link {
+        padding: 0.4rem 0.75rem;
+    }
+    #navbarNav .navbar-nav + .navbar-nav {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
 }
 
 /** Hero search **/
@@ -85,8 +103,9 @@ body {
 }
 .card-img {
     width: 270px;
-    height: auto;
-    background-color: #e9ecef; /* placeholder while loading */
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background-color: #e9ecef;
 }
 /** Card body flex so "More Info" button never overlaps text **/
 #featured-recipe-container .card-body,
@@ -221,6 +240,10 @@ footer .row {
 @media screen and (min-width: 768px) {
     #nav-title {
         font-size: 3rem;
+    }
+    #navbarNav {
+        flex-direction: column !important;
+        align-items: flex-end;
     }
     #search-container {
         min-height: 75vh;

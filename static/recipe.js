@@ -112,7 +112,12 @@ function refreshIngredients() {
 }
 
 if (servingsInput) {
-    servingsInput.addEventListener('input', refreshIngredients);
+    servingsInput.addEventListener('input', function () {
+        const v = parseInt(this.value, 10);
+        if (v < 1) this.value = 1;
+        if (v > 99) this.value = 99;
+        refreshIngredients();
+    });
 }
 
 if (unitToggle) {
