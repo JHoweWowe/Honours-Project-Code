@@ -131,7 +131,8 @@ class SpoonacularAPI():
                 # Check if recipe USD cost exists
                 for name, cost in ingredient_name_cost_list:
 
-                    name_str = unidecode.unidecode(name.text)
+                    # Remove any Latin-1 Supplement characters except for fractions
+                    name_str = re.sub('[\xA0-\xBB\xC0-\xFF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]', '', name.text)
 
                     cost_str = cost.text
                     if cost_str.startswith('$'):

@@ -131,6 +131,9 @@ for recipe in recipes:
     steps_str = ''.join(steps_array)
     ingredients_tag_list, equipment_list = spoonacular_API.analyze_recipe_instructions(api_key, steps_str)
 
+    # Obtain estimated recipe prices - in forms of USD and GBP
+    recipe_price_obj_list = SpoonacularAPI().get_recipe_estimated_price(api_key, list_of_ingredients_array, default_servings)
+
     # TODO: Add prep, cook & total time and 
     recipe_json = {
         "title": title,
@@ -147,7 +150,8 @@ for recipe in recipes:
         "ingredient_tags": ingredients_tag_list,
         "steps": steps_array,
         "equipment": equipment_list,
-        "cuisine": main_cuisine
+        "cuisine": main_cuisine,
+        "prices": recipe_price_obj_list,
     }
 
     recipes_json_list.append(recipe_json)
