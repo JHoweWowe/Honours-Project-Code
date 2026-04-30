@@ -10,7 +10,9 @@ Browser - HTML,CSS,JS,BootStrap (If time allows, use React for scability)
 2. Open MongoDBCompass and connect it to localhost with port of 27017
 3. Ensure Flask is setup properly
 4. Execute `setup_settings.py` on console
-5. Go to `settings.ini` and type in respective API and database settings 
+5. Go to `settings.ini` and type in respective API and database settings
+    - Database by default is called `db`
+    - Collections can either be named `bbcgoodfood` or `tasty`
 
 # Execute Server
 1. Ensure MongoDB is running (in background)
