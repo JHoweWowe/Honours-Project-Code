@@ -1,33 +1,86 @@
 /** First Mobile Responsive Design approach **/
+body {
+    font-family: 'Poppins', 'Roboto', sans-serif !important;
+}
+
+#nav-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+.nav-item {
+    font-size: 1.5rem;
+}
+
+#outer-search-container {
+    background-image: url(../default_image.jpg);
+    background-size: cover;
+    z-index: 100;
+    position: relative;
+}
 #search-container {
+    min-height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#advanced-search-title {
+    font-weight: 700;
+}
+#test-submit {
+    width: 100vw;
+}
+
+#featured-recipes-container {
     margin: 32px auto;
 }
+#featured-student-recipes-title {
+    font-weight: 700;
+}
+.card-title {
+    font-weight: 700;
+    font-size: 2rem;
+}
+.card-text {
+    margin-bottom: 4px;
+}
+.recipe-more-info-div {
+    position: absolute;
+    bottom: 16px;
+}
+
+/** Retrieved Recipes **/
 #relevant-recipes-title-div {
     display: flex;
     align-items: center;
-    margin: 8px auto;
 }
+
 #block-title {
     margin-left: 1rem;
-    font-family: var(--bs-body-font-family);
     font-size: calc(2.5rem + 1.5vw);
 }
+
 #relevant-recipes-row-div {
     justify-content: center;
 }
-#featured-recipe-container {
+#relevant-recipes-header-block-div {
     margin: 8px auto;
-    padding: 8px;
 }
-#relevant-recipe-container {
+
+#featured-recipe-container, #relevant-recipe-container {
     margin: 8px auto;
-    width: 95%;
     padding: 8px;
-}   
+    height: 650px;
+}
 
 /** Screens larger than 768px which is default breakpoint **/
 @media screen and (min-width: 768px) {
+    #nav-title {
+        font-size: 3rem; /** Should be variable? **/
+    }
     #search-container {
+        min-height: 75vh;
+    }
+    #test-submit {
         width: 50vw;
     }
     #featured-recipe-container {

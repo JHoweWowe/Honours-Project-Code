@@ -4,19 +4,21 @@
 
     <div class="container" id="relevant-recipes-container">
         <div class="row" id="relevant-recipes-row-div">
-            <div class="col-md-12" id="relevant-recipes-title-div">
-                <a href="{{ url_for('index') }}">
-                    <img src="../static/back_arrow.png" style="width:64px; height:64px">
-                </a>
-                <span id="block-title">{% block title %}Relevant Recipes{% endblock %}</span>
-            </div>
-            <div>
-                <label>Sort By:</label>
-                <select>
-                    <option value="default">Most Relevant</option>
-                    <option value="average_ranking" disabled>Highest Ranked</option>
-                    <option value="number_of_rankings" disabled>Most Number of Rankings</option>
-                </select>
+            <div id="relevant-recipes-header-block-div">
+                <div class="col-md-12" id="relevant-recipes-title-div">
+                    <a href="{{ url_for('index') }}">
+                        <img src="../static/back_arrow.png" style="width:64px; height:64px">
+                    </a>
+                    <span id="block-title">{% block title %}Relevant Recipes{% endblock %}</span>
+                </div>
+                <div>
+                    <label>Sort By:</label>
+                    <select>
+                        <option value="default">Most Relevant</option>
+                        <option value="average_ranking" disabled>Highest Ranked</option>
+                        <option value="number_of_rankings" disabled>Most Number of Rankings</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Check for just size 1 -->
@@ -24,9 +26,7 @@
             <div class="col-md-4 card" id="relevant-recipe-container">
                 <img class="card-img" src="{{ d.image_url }}">
                 <div class="card-body">
-                    <a href="{{ url_for('view_recipe', id = d._id) }}">
-                        <h5 class="card-title"> {{ d.title }} </h5>
-                    </a>
+                    <h5 class="card-title"> {{ d.title }} </h5>
                     <p class="card-text">Dietary Requirements:
                         {% if d.dietary_requirements | length == 0 %}
                         None
@@ -34,7 +34,10 @@
                         {{ d.dietary_requirements }}
                         {% endif %}
                     </p>
-                    <p>Total Cooking Time: {{ d.total_time }} mins</p>        
+                    <p>Total Cooking Time: {{ d.total_time }} mins</p>
+                    <div class="recipe-more-info-div">
+                        <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
+                    </div>        
                 </div>
             </div>
             {% else %}

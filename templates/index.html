@@ -6,55 +6,57 @@
 {% block content %}
 
     <!-- SEARCH RECIPES -->
-    <div class="container" id="search-container">
-      <form id="test-submit" action="/search" method="GET">
-          <div class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Recipe Name, Ingredient or Keyword">
-              <span class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="submit">
-                      <i class="bi bi-search"></i>
-                  </button>
-              </span>
-          </div>
+    <div id="outer-search-container">
+      <div id="search-container">
+        <form id="test-submit" action="/search" method="GET">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Recipe Name, Ingredient or Keyword">
+                <span class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </span>
+            </div>
 
-          <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="flush-headingOne">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                    Advanced Search
-                  </button>
-                </h2>
-                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                  <div class="accordion-body">
-                    <div class="row">
-                      <div class="col-md-6" id="total-cooking-time-container">
-                        <h3>Maximum Total Cooking Time:</h3>
-                        <div class="slidecontainer">
-                          <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="cooking-time-range">
-                          <p><span id="cooking-time-span-value"></span> mins</p>
-                        </div>       
-                      </div>
-                      <div class="col-md-6" id="dietary-requirements-container">
-                        <h3>Dietary Requirements:</h3>
-                        <select name="dietary-requirements-dropdown" multiple="multiple">
-                          <option value="Vegetarian">Vegetarian</option>
-                          <option value="Vegan">Vegan</option>
-                          <option value="Gluten-free">Gluten-Free</option>
-                        </select>
-                      </div>
-                      <div class="col-md-12" id="ingredients-container">
-                        <h1>Ingredients:</h1>
-                        <h3>Include:</h3>
-                        <input type="text" name="include-ingredients" class="form-control" placeholder="Use commas to separate">
-                        <h3>Exclude:</h3>
-                        <input type="text" name="exclude-ingredients" class="form-control" placeholder="Use commas to separate">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                      <span id="advanced-search-title">Advanced Search</span>
+                    </button>
+                  </h2>
+                  <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                      <div class="row">
+                        <div class="col-md-6" id="total-cooking-time-container">
+                          <h3>Maximum Total Cooking Time:</h3>
+                          <div class="slidecontainer">
+                            <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="cooking-time-range">
+                            <p><span id="cooking-time-span-value"></span> mins</p>
+                          </div>       
+                        </div>
+                        <div class="col-md-6" id="dietary-requirements-container">
+                          <h3>Dietary Requirements:</h3>
+                          <select name="dietary-requirements-dropdown" multiple="multiple">
+                            <option value="Vegetarian">Vegetarian</option>
+                            <option value="Vegan">Vegan</option>
+                            <option value="Gluten-free">Gluten-Free</option>
+                          </select>
+                        </div>
+                        <div class="col-md-12" id="ingredients-container">
+                          <h1>Ingredients:</h1>
+                          <h3>Include:</h3>
+                          <input type="text" name="include-ingredients" class="form-control" placeholder="Use commas to separate">
+                          <h3>Exclude:</h3>
+                          <input type="text" name="exclude-ingredients" class="form-control" placeholder="Use commas to separate">
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-          </div>
-      </form>
+            </div>
+        </form>
+      </div>
     </div>
 
     <!-- FEATURED RECIPES -->
@@ -62,23 +64,27 @@
         <div class="row" style="margin: 0px auto">
             {% if featured_recipes_data | length > 0 %}
             <div class="col-md-12">
-              <h1>Featured Recipes</h1>
+              <h1 id="featured-student-recipes-title">Featured Student Recipes</h1>
             </div>
               {% for d in featured_recipes_data %}
               <div class="col-md card" id="featured-recipe-container">
                   <img class="card-img" src="{{ d.image_url }}" alt="{{ d.description }}">
                   <div class="card-body">
                       <h5 class="card-title">{{ d.title }}</h5>
-                      <p class="card-text">Dietary Requirements:
-                        {% if d.dietary_requirements | length == 0 %}
-                        None
-                        {% else %}
-                        {{ d.dietary_requirements }}
-                        {% endif %}
-                      </p>
-                      <p class="card-text">Average Rating: {{ d.average_rating }} / 5</p>
-                      <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>
-                      <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
+                      <div class="card-body-details-div">
+                        <p class="card-text">Dietary Requirements:
+                          {% if d.dietary_requirements | length == 0 %}
+                          None
+                          {% else %}
+                          {{ d.dietary_requirements }}
+                          {% endif %}
+                        </p>
+                        <p class="card-text">Average Rating: {{ d.average_rating }} / 5</p>
+                        <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>  
+                      </div>
+                      <div class="recipe-more-info-div">
+                        <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
+                      </div>
                   </div>
               </div>
               {% endfor %}
