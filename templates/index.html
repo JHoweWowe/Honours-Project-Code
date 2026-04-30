@@ -24,21 +24,26 @@
                 <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                   <div class="accordion-body">
                     <div id="total-cooking-time-container">
-                      <h3>Cooking Time [Should be max]:</h3>
-                      <select name="total-cooking-time">
-                        <option value="">Select...</option>
-                        <option value="30">30 mins</option>
-                        <option value="50">50 mins</option>
-                      </select>          
+                      <h3>Maximum Cooking Time:</h3>
+                      <div class="slidecontainer">
+                        <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="cooking-time-range">
+                        <p><span id="cooking-time-span-value"></span></p>
+                      </div>       
                     </div>
                     <div id="dietary-requirements-container">
                       <h3>Dietary Requirements:</h3>
                       <select name="dietary-requirements-dropdown" multiple="multiple">
-                        <option value="">Select...</option>
                         <option value="Vegetarian">Vegetarian</option>
                         <option value="Vegan">Vegan</option>
                         <option value="Gluten-free">Gluten-Free</option>
                       </select>
+                    </div>
+                    <div id="ingredients-container">
+                      <h1>Ingredients [TODO]:</h1>
+                      <h3>Include:</h3>
+                      <input type="text" name="include-ingredients" class="form-control">
+                      <h3>Exclude:</h3>
+                      <input type="text" name="exclude-ingredients" class="form-control">
                     </div>
                   </div>
                 </div>
@@ -67,5 +72,8 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- Script -->
+    <script src="../static/index.js"></script>
     
 {% endblock %}
