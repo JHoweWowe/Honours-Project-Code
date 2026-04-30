@@ -38,6 +38,31 @@ class SpoonacularAPI():
         else:
             return tuple([], [])
 
-    # TODO: Complete function acting as an endpoint call
-    def another_function():
-        pass
+    # Endpoint call to classify recipe's cuisine
+    def classify_cuisine(self, api_key, recipe_title, ingredients_list):
+
+        base_url = 'https://api.spoonacular.com/recipes/cuisine'
+
+        ingredients_list_str = ''.join([ingredient + '\n' for ingredient in ingredients_list])
+
+        params = {
+            'apiKey': api_key,
+            'title': recipe_title,
+            'ingredientList': ingredients_list_str,
+            'language': 'en'
+        }
+
+        url = base_url + '?' + 'apiKey=' + params['apiKey'] + '&' + 'title=' + params['title'] + '&' + 'ingredientList=' + params['ingredientList'] + '&' + 'language=' + params['language']
+
+        r = requests.post(url, headers={"Content-Type": "application/x-www-form-urlencoded"})
+
+        # Check response status code validity
+        if r.status_code == 200:
+            results = r.json()
+            main_cuisine = results['cuisine']
+            secondary_cuisines = results['cuisines']
+            confidence = results['confidence']
+            
+            return main_cuisine
+        else:
+            return None
