@@ -9,15 +9,22 @@
                     <a href="javascript:history.back()">
                         <img src="{{ url_for('static', filename='back_arrow.png') }}" style="width:64px; height:64px">
                     </a>
-                    <span id="block-title">{% block title %}Relevant Recipes{% endblock %}</span>
+                    {% if query %}
+                    <span id="block-title">Recipes with {% block title %}{{ query.capitalize() }}{% endblock %}</span>
+                    {% else %}
+                    <span id="block-title">Recipes</span>
+                    {% endif %}
                 </div>
-                <div>
-                    <label>Sort By:</label>
-                    <select>
-                        <option value="default">Most Relevant</option>
-                        <option value="average_ranking" disabled>Highest Ranked</option>
-                        <option value="number_of_rankings" disabled>Most Number of Rankings</option>
-                    </select>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                      Sort By:
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, include='', exclude='', sort='relevance') }}">Most Relevant</a>
+                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, include='', exclude='', sort='rating') }}">Highest Rating</a>
+                      <a class="dropdown-item" href="{{ url_for('search', q=query, time=time, include='', exclude='', sort='popularity') }}">Most Number of Ratings</a>
+                      <a class="dropdown-item disabled" href="#">Lowest to Highest Price</a>
+                    </div>
                 </div>
             </div>
 
@@ -26,7 +33,7 @@
             <div class="col-md-4 card" id="relevant-recipe-container">
                 <img class="card-img" src="{{ d.image_url }}">
                 <div class="card-body">
-                    <h5 class="card-title"> {{ d.title }} </h5>
+                    <h5 class="card-title"> {{ d.title.capitalize() }} </h5>
                     <p class="card-text">Dietary Requirements:
                         {% if d.dietary_requirements | length == 0 %}
                         None
