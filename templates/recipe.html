@@ -12,16 +12,20 @@
         <div class="col-md-4">
             <img src="{{ recipe_data.image_url }}" style="width: 100%; height: auto;">
         </div>
-        <div class="col-md-8">
-            <h2>Description: {{ recipe_data.description }}</h2>
-            <h2>Dietary Requirements: </h2>
-            {% for dietary_requirement in recipe_data.dietary_requirements %}
-            <h2>{{ dietary_requirement }}</h2>
-            {% else %}
-            <h2>None</h2>
-            {% endfor %}
-            <h2>Cuisine: {{ recipe_data.cuisine }}</h2>
-            <h2>Total Cooking Time: {{ recipe_data.total_time }} mins</h2>
+        <div class="col-md-8" id="recipe-data-right-div">
+            <div id="recipe-data-right-inner-div">
+                <h2 id="recipe-description-title"><b>Description:</b> <span>{{ recipe_data.description }}</span></h2>
+                <h2 id="recipe-dietary-requirements-title">
+                    <b>Dietary Requirements:</b>
+                    {% for dietary_requirement in recipe_data.dietary_requirements %}
+                    <span>{{ dietary_requirement }},</span>
+                    {% else %}
+                    None
+                </h2>
+                {% endfor %}
+                <h2 id="recipe-cuisine-title"><b>Cuisine:</b> {{ recipe_data.cuisine }}</h2>
+                <h2 id="recipe-total-cooking-time-title"><b>Total Cooking Time:</b> {{ recipe_data.total_time }} mins</h2>    
+            </div>
         </div>
 
         <div class="col-md-12">
@@ -29,10 +33,10 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
                       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                          <strong>More Information</strong>
+                          <strong id="accordion-more-info-title">More Information</strong>
                       </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                       <div class="row accordion-body">
                           <div class="col-md-6" id="credits-div">
                               <h2>Credits:</h2>
@@ -57,7 +61,7 @@
         </div>
 
         <div class="col-md-4">
-            <div id="options-container">
+            <div id="options-container" style="display: none;"> <!-- Temporarily remove -->
                 <h1>Options: [TODO]</h1>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" value="Metric" id="flexSwitchCheckChecked" checked>
@@ -70,7 +74,7 @@
             </div>
             <h1>Ingredients:</h1>
             {% for ingredient in recipe_data.ingredients %}
-            <p>{{ ingredient }}</p>
+            <p id="ingredient-title">{{ ingredient }}</p>
             {% endfor %}
         </div>
         <div class="col-md-8">
@@ -80,10 +84,12 @@
             {% else %}
             <span>None</span>
             {% endfor %}
-            <h1>Directions:</h1>
-            {% for step in recipe_data.steps %}
-            <p>{{ step }}</p>
-            {% endfor %}
+            <div id="directions-div">
+                <h1>Directions:</h1>
+                {% for step in recipe_data.steps %}
+                <p>{{ step }}</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
