@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='recipe.css') }}">
-    <title>{% block title %} {% endblock %} - JustCookStudent </title>
+    <title>{% block title %} {% endblock %} - JustCookStudent</title>
 
     <!-- Bootstrap CSS and Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
@@ -19,14 +19,19 @@
 
 <body>
 
+    <!-- Page loading overlay (shown during navigation) -->
+    <div id="page-loader">
+        <div class="loader-spinner"></div>
+    </div>
+
     <!-- HEADER -->
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" id="nav-title" href="{{ url_for('index') }}">JustCookStudent</a>
+            <a class="navbar-brand" id="nav-title" href="{{ url_for('main.index') }}">JustCookStudent</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div>
                 <div class="collapse navbar-collapse text-right" id="navbar-header">
                     <ul class="navbar-nav ms-auto">
@@ -41,21 +46,20 @@
                         </li>
                     </ul>
                 </div>
-    
+
                 <div class="collapse navbar-collapse" id="navbar-quick-links">
                     <ul class="navbar-nav ms-auto">
                         <li>
-                            <a class="nav-link" href="{{ url_for('search', q='', time=45, dq='Vegetarian', include='', exclude='', sort='relevance') }}">Eat Your Veggies</a>
+                            <a class="nav-link" href="{{ url_for('main.search', q='', time=45, dq='Vegetarian', include='', exclude='', sort='relevance') }}">Eat Your Veggies</a>
                         </li>
                         <li>
-                            <a class="nav-link" href="{{ url_for('search', q=query, time=30, dq=dq, include='', exclude='', sort='time') }}">Fast Meal Prep</a>
+                            <a class="nav-link" href="{{ url_for('main.search', q='', time=30, dq='', include='', exclude='', sort='time') }}">Fast Meal Prep</a>
                         </li>
                         <li>
-                            <a class="nav-link disabled" href="#">Cheap Recipes</a>
+                            <a class="nav-link" href="{{ url_for('main.search', q='', time=0, dq='', include='', exclude='', sort='price') }}">Cheap Recipes</a>
                         </li>
                     </ul>
                 </div>
-    
             </div>
         </div>
     </nav>
@@ -65,24 +69,40 @@
     </div>
 
     <footer class="footer">
-		<div id="footer-div" class="container">
-			<div class="row">
-				<div id="footer-left" class="col-md-8">
+        <div id="footer-div" class="container">
+            <div class="row">
+                <div id="footer-left" class="col-md-8">
                     A honours project created from a University of Edinburgh graduate. <br>
                     Developed with Passion, Deployed on Heroku.
-				</div>
-				<div id="footer-right" class="col-md-4">
-					<p>© 2023 <a id="justin-howe-link" href="https://justinhowe.me/" target="_blank">Justin Howe</a>
-				</div>
-			</div>
-		</div>
-	</footer>
+                </div>
+                <div id="footer-right" class="col-md-4">
+                    <p>© 2022-2026 <a id="justin-howe-link" href="https://justinhowe.me/" target="_blank">Justin Howe</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Optional JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
 
-</body>
+    <script>
+        // Show page loader when navigating away
+        document.addEventListener('click', function (e) {
+            var link = e.target.closest('a[href]');
+            if (link && !link.href.startsWith('#') && link.target !== '_blank' && !link.href.startsWith('javascript')) {
+                document.getElementById('page-loader').classList.add('visible');
+            }
+        });
+        document.addEventListener('submit', function () {
+            document.getElementById('page-loader').classList.add('visible');
+        });
+        // Hide loader when page is shown (back/forward cache)
+        window.addEventListener('pageshow', function () {
+            document.getElementById('page-loader').classList.remove('visible');
+        });
+    </script>
 
+</body>
 </html>

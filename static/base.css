@@ -1,8 +1,39 @@
-/** First Mobile Responsive Design approach **/
+/** Mobile-first responsive design **/
 body {
     font-family: 'Poppins', 'Roboto', sans-serif !important;
 }
 
+/** Page fade-in on load **/
+.content {
+    animation: fadeIn 0.2s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/** Page loading overlay **/
+#page-loader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.75);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+#page-loader.visible { display: flex; }
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #dee2e6;
+    border-top-color: #0d6efd;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/** Navbar **/
 #nav-title {
     margin-left: 0.5rem;
     font-weight: 700;
@@ -18,6 +49,7 @@ body {
     text-decoration: underline;
 }
 
+/** Hero search **/
 #outer-search-container {
     background-image: url(../default_image.jpg);
     background-size: cover;
@@ -37,6 +69,7 @@ body {
     width: 100vw;
 }
 
+/** Featured recipes **/
 #featured-recipes-container {
     margin: 32px auto;
 }
@@ -53,22 +86,50 @@ body {
 .card-img {
     width: 270px;
     height: auto;
+    background-color: #e9ecef; /* placeholder while loading */
+}
+/** Card body flex so "More Info" button never overlaps text **/
+#featured-recipe-container .card-body,
+#relevant-recipe-container .card-body {
+    display: flex;
+    flex-direction: column;
 }
 .recipe-more-info-div {
-    position: absolute;
-    bottom: 16px;
+    margin-top: auto;
+    padding-top: 8px;
 }
 
-/** Retrieved Recipes **/
+/** Recipe badges **/
+.cuisine-badge {
+    font-size: 0.75rem;
+    margin-right: 4px;
+    margin-bottom: 6px;
+    align-self: flex-start;
+}
+.price-badge {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+    align-self: flex-start;
+}
+
+/** Search results container — max 32px side margin on any screen width **/
+#relevant-recipes-container {
+    max-width: 100%;
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
+
 #relevant-recipes-title-div {
     display: flex;
     align-items: center;
+    gap: 12px;
 }
 
 #block-title {
     margin-left: 1rem;
     font-size: calc(2rem + 1.25vw);
     font-weight: 700;
+    flex: 1;
 }
 
 #relevant-recipes-row-div {
@@ -81,9 +142,15 @@ body {
 #featured-recipe-container, #relevant-recipe-container {
     margin: 8px auto;
     padding: 8px;
-    height: 700px;
+    min-height: 420px;
     width: 95%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+#featured-recipe-container:hover, #relevant-recipe-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
 #sort-recipe-form {
     width: 8rem;
 }
@@ -92,6 +159,52 @@ body {
     display: flex;
 }
 
+/** Pagination **/
+#pagination-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0;
+}
+#pagination-info {
+    font-weight: 500;
+}
+.pagination-btn {
+    min-width: 90px;
+}
+
+/** Cuisine browsing **/
+#cuisine-browse-container {
+    margin: 32px auto;
+}
+#cuisine-browse-title {
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+#cuisine-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.cuisine-pill {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #212529;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.cuisine-pill:hover {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+/** Footer **/
 footer {
     background-color: #f8f9fa;
     padding: 8px 0px;
@@ -104,10 +217,10 @@ footer .row {
     margin-top: 16px;
 }
 
-/** Screens larger than 768px which is default breakpoint **/
+/** Screens ≥768px **/
 @media screen and (min-width: 768px) {
     #nav-title {
-        font-size: 3rem; /** Should be variable? **/
+        font-size: 3rem;
     }
     #search-container {
         min-height: 75vh;
@@ -117,12 +230,12 @@ footer .row {
     }
     #featured-recipe-container {
         margin: 0px 8px;
-        height: 700px;
+        min-height: 420px;
     }
     #relevant-recipe-container {
         width: 30%;
         margin: 8px;
-        height: 700px;
+        min-height: 420px;
     }
     #footer-left {
         justify-content: center;
@@ -136,5 +249,17 @@ footer .row {
     }
     footer a {
         margin: 0px 4px;
-    }     
+    }
+}
+
+/** Print styles **/
+@media print {
+    nav, footer, #options-container, #price-container,
+    #recipeMoreInformationAccordion, #print-btn,
+    #related-recipes-container, #page-loader {
+        display: none !important;
+    }
+    #relevant-recipes-title-div img { display: none; }
+    .content { animation: none; }
+    body { font-size: 12pt; }
 }
