@@ -2,15 +2,46 @@
 
 {% block content %}
   <div class="container-fluid">
-    <h1>{% block title %} Index {% endblock %}</h1>
-    <h1>Find Recipes:</h1>
+    <h1>{% block title %} Find Recipes {% endblock %}</h1>
+
+    <h1>Quick Search: </h1>
+  
     <form id="search-recipe-form" action="/" method="post">
-      <h3>Cooking Time [Test]:</h3>
-      <select name="cooking-time">
-        <option value="">Select...</option>
-        <option value="30 mins">30 mins</option>
-        <option value="50 mins">50 mins</option>
-      </select>
+
+      <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+              Recipe Requirements
+            </button>
+          </h2>
+          <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+              <h3>Cooking Time [Test]:</h3>
+              <select name="cooking-time">
+                <option value="">Select...</option>
+                <option value="30 mins">30 mins</option>
+                <option value="50 mins">50 mins</option>
+              </select>        
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+              Result Filters
+            </button>
+          </h2>
+          <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+              <h3>Rating: Lowest to Highest</h3>
+              <h3>Rating: Highest to Lowest</h3>
+              <h3>Number of Results Shown</h3>  
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="submit-container">
         <input type="submit" value="Submit" name="submit">
       </div>
