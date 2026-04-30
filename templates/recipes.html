@@ -21,7 +21,7 @@
 
             <!-- Check for just size 1 -->
             {% for d in data %}
-            <div class="col-md-6 card" id="relevant-recipe-container">
+            <div class="col-md-4 card" id="relevant-recipe-container">
                 <img class="card-img" src="{{ d.image_url }}">
                 <div class="card-body">
                     <a href="{{ url_for('view_recipe', id = d._id) }}">

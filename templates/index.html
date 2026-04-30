@@ -26,27 +26,29 @@
                 </h2>
                 <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                   <div class="accordion-body">
-                    <div id="total-cooking-time-container">
-                      <h3>Maximum Total Cooking Time:</h3>
-                      <div class="slidecontainer">
-                        <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="cooking-time-range">
-                        <p><span id="cooking-time-span-value"></span> mins</p>
-                      </div>       
-                    </div>
-                    <div id="dietary-requirements-container">
-                      <h3>Dietary Requirements:</h3>
-                      <select name="dietary-requirements-dropdown" multiple="multiple">
-                        <option value="Vegetarian">Vegetarian</option>
-                        <option value="Vegan">Vegan</option>
-                        <option value="Gluten-free">Gluten-Free</option>
-                      </select>
-                    </div>
-                    <div id="ingredients-container">
-                      <h1>Ingredients:</h1>
-                      <h3>Include:</h3>
-                      <input type="text" name="include-ingredients" class="form-control" placeholder="Use commas to separate">
-                      <h3>Exclude:</h3>
-                      <input type="text" name="exclude-ingredients" class="form-control" placeholder="Use commas to separate">
+                    <div class="row">
+                      <div class="col-md-6" id="total-cooking-time-container">
+                        <h3>Maximum Total Cooking Time:</h3>
+                        <div class="slidecontainer">
+                          <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="cooking-time-range">
+                          <p><span id="cooking-time-span-value"></span> mins</p>
+                        </div>       
+                      </div>
+                      <div class="col-md-6" id="dietary-requirements-container">
+                        <h3>Dietary Requirements:</h3>
+                        <select name="dietary-requirements-dropdown" multiple="multiple">
+                          <option value="Vegetarian">Vegetarian</option>
+                          <option value="Vegan">Vegan</option>
+                          <option value="Gluten-free">Gluten-Free</option>
+                        </select>
+                      </div>
+                      <div class="col-md-12" id="ingredients-container">
+                        <h1>Ingredients:</h1>
+                        <h3>Include:</h3>
+                        <input type="text" name="include-ingredients" class="form-control" placeholder="Use commas to separate">
+                        <h3>Exclude:</h3>
+                        <input type="text" name="exclude-ingredients" class="form-control" placeholder="Use commas to separate">
+                      </div>
                     </div>
                   </div>
                 </div>
