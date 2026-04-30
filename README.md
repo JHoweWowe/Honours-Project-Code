@@ -17,6 +17,7 @@ For further details, please refer to the Honours Project report found in page 27
 2. Create a virtual environment in Python and activate it
     - `python -m venv venv`
 3. Ensure the Python dependencies from `requirements.txt` are installed in the virtual environment, especially Flask
+    - `pip install -r requirements.txt`
 4. Execute `setup_settings.py` on console
 5. Go to `settings.ini` and type in respective API and database settings
     - Database by default is called `db`
