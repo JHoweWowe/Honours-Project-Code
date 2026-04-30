@@ -14,17 +14,26 @@ def index():
 # Test with filters as arguments
 @app.route('/', methods=['POST'])
 def search_recipes():
-    filters = []
-    time = request.form['cooking-time']
-    print(time)
-    #return get_recipe_data(time)
-    return test_get_recipe_data(time)
+    requirements = dict()
+    filters = dict()
+
+    time = request.form.get('cooking-time', default='')
+    if time != '':
+        requirements['time'] = time
+
+    return test_get_recipe_data(requirements)
 
 @app.route('/test-route-recipes', methods=['GET'])
-def test_get_recipe_data(time):
-    #return render_template('comments.html', comments=test_comments)
+def test_get_recipe_data(requirements):
     try:
-        data = list(mongo.db.bbcgoodfood.find({"time": time})) # Takes recipes with 50 mins
+        #data = list(mongo.db.bbcgoodfood.find({"time": time})) # Takes recipes with 50 mins
+        print(len(requirements))
+
+
+        data = list(mongo.db.bbcgoodfood.aggregate([
+            {"$match": requirements},
+            {"$sample": {"size": 3}}, # Just a test
+        ]))
         for recipe in data:
             recipe["_id"] = str(recipe["_id"])
         return render_template('recipes.html', data=data)
