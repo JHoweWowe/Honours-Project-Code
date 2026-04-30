@@ -87,4 +87,4 @@ def view_recipe(id):
     return render_template('recipe.html', id=id, recipe_data = recipe_data) # Data passed redudantly
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000) # Change port number for future purposes
