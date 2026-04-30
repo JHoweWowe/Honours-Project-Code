@@ -134,7 +134,7 @@ for container in containers:
             number_of_servings_str_list = number_of_servings_str.split(" ")
             number_of_servings = int(number_of_servings_str_list[1])
 
-        # TODO: Manually determine dietary requirements using simple text analysis
+        # Obtain recipe dietary requirements
         allowed_dietary_requirements_array = ['vegan', 'vegetarian', 'gluten_free', 'pescatarian'] # To be refactored more to allow more dq options
         dietary_requirements_list = list()
 
@@ -171,6 +171,9 @@ for container in containers:
 
         # Classify estimated cuisine
         cuisine_str = SpoonacularAPI().classify_cuisine(api_key, title, ingredients_list)
+
+        # Obtain estimated recipe prices - in forms of USD and GBP
+        recipe_price_obj_list = SpoonacularAPI().get_recipe_estimated_price(api_key, ingredients_list, number_of_servings)
         
         # TODO: Append price response
         # Append recipe JSON format
@@ -189,7 +192,8 @@ for container in containers:
             "ingredient_tags": ingredients_tag_list,
             "steps": preparation_steps_list,
             "equipment": equipment_list,
-            "cuisine": cuisine_str
+            "cuisine": cuisine_str,
+            "prices": recipe_price_obj_list,
         }
 
         recipes_json_list.append(recipe_json)
