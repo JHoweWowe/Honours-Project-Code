@@ -91,6 +91,13 @@ body {
 #featured-recipes-container {
     margin: 32px auto;
 }
+
+/** Shared 3rem side padding — keeps both recipe sections visually consistent **/
+#featured-recipes-container,
+#relevant-recipes-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
 #featured-student-recipes-title {
     font-weight: 700;
 }
@@ -131,12 +138,6 @@ body {
     align-self: flex-start;
 }
 
-/** Search results container — max 32px side margin on any screen width **/
-#relevant-recipes-container {
-    max-width: 100%;
-    padding-left: 3rem;
-    padding-right: 3rem;
-}
 
 #relevant-recipes-title-div {
     display: flex;
@@ -223,7 +224,6 @@ body {
     border-color: #0d6efd;
 }
 
-/** Footer **/
 footer {
     background-color: #f8f9fa;
     padding: 8px 0px;

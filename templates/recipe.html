@@ -82,6 +82,15 @@
                            value="{{ recipe_data.default_servings }}"
                            data-default="{{ recipe_data.default_servings }}">
                 </div>
+                <div id="currency-control">
+                    <label for="currency-select">Currency:</label>
+                    <select id="currency-select" class="form-select form-select-sm">
+                        <option value="GBP">£ GBP</option>
+                        <option value="USD">$ USD</option>
+                        <option value="EUR">€ EUR</option>
+                        <option value="SGD">S$ SGD</option>
+                    </select>
+                </div>
             </div>
 
             <div id="ingredients-list">
@@ -112,19 +121,19 @@
                 <h1>Estimated Recipe Prices:</h1>
                 {% if recipe_data.prices and recipe_data.prices | length > 1 and recipe_data.prices[1] %}
                 <div id="price-container-gbp-costs">
-                    <h4><b>Estimated Cost Per Serving: £{{ recipe_data.prices[1]['overall_cost_per_serving'] }}</b></h4>
-                    <h4>Total Estimated Cost: £{{ recipe_data.prices[1]['overall_cost'] }}</h4>
+                    <h4><b>Estimated Cost Per Serving: <span id="price-per-serving" data-gbp="{{ recipe_data.prices[1]['overall_cost_per_serving'] }}">£{{ recipe_data.prices[1]['overall_cost_per_serving'] }}</span></b></h4>
+                    <h4>Total Estimated Cost: <span id="price-total" data-gbp="{{ recipe_data.prices[1]['overall_cost'] }}">£{{ recipe_data.prices[1]['overall_cost'] }}</span></h4>
                 </div>
                 <div id="ingredient-gbp-cost-breakdown" class="row">
                     <h4>Ingredient Cost Breakdown:</h4>
                     {% for ingredient, cost in recipe_data.prices[1]['ingredients_name_cost_list'].items() %}
                     <div class="ingredient-gbp-cost-div col-md-4">
                         <p>{{ ingredient }}: </p>
-                        <p style="margin-left: 8px;">£{{ cost }}</p>
+                        <p style="margin-left: 8px;" class="ingr-cost-val" data-gbp="{{ cost }}">£{{ cost }}</p>
                     </div>
                     {% endfor %}
                 </div>
-                <p class="text-muted">Note: Prices provided by Spoonacular from a variety of supermarkets and are estimates only.</p>
+                <p class="text-muted">Note: Prices provided by Spoonacular from a variety of supermarkets and are estimates only. Currency rates are approximate.</p>
                 {% else %}
                 <p>Price data not available for this recipe.</p>
                 {% endif %}

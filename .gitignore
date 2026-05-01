@@ -4,5 +4,5 @@
 geckodriver.log
 settings.ini
 /routes/__pycache__/
-justCookStudentInitialRoadMap.md
+/roadMap/
 .env

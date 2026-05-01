@@ -55,6 +55,15 @@
 #servings-input {
     width: 70px;
 }
+#currency-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+#currency-select {
+    width: auto;
+}
 
 /** Print button **/
 #print-btn {

@@ -117,6 +117,7 @@ if (servingsInput) {
         if (v < 1) this.value = 1;
         if (v > 99) this.value = 99;
         refreshIngredients();
+        refreshPrice();
     });
 }
 
@@ -127,3 +128,38 @@ if (unitToggle) {
         refreshIngredients();
     });
 }
+
+// --- Price scaling + currency conversion (static rates, base GBP) ---
+
+const EXCHANGE_RATES   = { GBP: 1, USD: 1.26, EUR: 1.17, SGD: 1.68 };
+const CURRENCY_SYMBOLS = { GBP: '£', USD: '$', EUR: '€', SGD: 'S$' };
+
+const currencySelect  = document.getElementById('currency-select');
+const pricePerServing = document.getElementById('price-per-serving');
+const priceTotal      = document.getElementById('price-total');
+const ingrCostEls     = document.querySelectorAll('.ingr-cost-val');
+
+function refreshPrice() {
+    const ratio    = servingsInput
+        ? (parseInt(servingsInput.value, 10) || defaultServings) / defaultServings
+        : 1;
+    const currency = currencySelect ? currencySelect.value : 'GBP';
+    const rate     = EXCHANGE_RATES[currency] || 1;
+    const sym      = CURRENCY_SYMBOLS[currency] || '£';
+
+    if (pricePerServing) {
+        const base = parseFloat(pricePerServing.dataset.gbp);
+        if (!isNaN(base)) pricePerServing.textContent = sym + (base * rate).toFixed(2);
+    }
+    if (priceTotal) {
+        const base = parseFloat(priceTotal.dataset.gbp);
+        if (!isNaN(base)) priceTotal.textContent = sym + (base * ratio * rate).toFixed(2);
+    }
+    ingrCostEls.forEach(el => {
+        const base = parseFloat(el.dataset.gbp);
+        if (!isNaN(base)) el.textContent = sym + (base * ratio * rate).toFixed(2);
+    });
+}
+
+if (currencySelect) currencySelect.addEventListener('change', refreshPrice);
+refreshPrice();
