@@ -60,6 +60,7 @@ The project uses [pytest-bdd](https://pytest-bdd.readthedocs.io/) (Gherkin/BDD s
 
 ### Install test dependencies
 ```bash
+pip install -r requirements.txt # Dependencies required for main app to run
 pip install -r requirements-test.txt
 ```
 
