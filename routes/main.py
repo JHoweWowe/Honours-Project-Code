@@ -1,6 +1,7 @@
 import math
 
 from flask import Blueprint, render_template, request, current_app
+from flask_login import current_user
 from extensions import cache
 
 bp = Blueprint('main', __name__)
@@ -9,7 +10,7 @@ PER_PAGE = 6
 
 
 @bp.route('/', methods=['GET'])
-@cache.cached(timeout=300, key_prefix='index')
+@cache.cached(timeout=300, key_prefix='index', unless=lambda: current_user.is_authenticated)
 def index():
     mongo = current_app.mongo
     featured = list(
@@ -24,7 +25,7 @@ def index():
 
 
 @bp.route('/search', methods=['GET'])
-@cache.cached(timeout=300, query_string=True)
+@cache.cached(timeout=300, query_string=True, unless=lambda: current_user.is_authenticated)
 def search():
     mongo = current_app.mongo
 

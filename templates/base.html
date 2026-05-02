@@ -38,12 +38,18 @@
                     <li class="nav-item">
                         <a class="nav-link disabled" href="#">About</a>
                     </li>
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Register</a>
+                        <span class="nav-link">{{ current_user.display_name }}</span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Sign In</a>
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
                     </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Sign In with Google</a>
+                    </li>
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav flex-row flex-wrap">
                     <li class="nav-item">
