@@ -37,3 +37,7 @@ Feature: Authentication
     Given I am logged in as a test user
     When I visit the login page while authenticated
     Then the response status is 302
+
+  Scenario: Unauthenticated login route redirects to Google OAuth
+    When I visit the login page while unauthenticated
+    Then the response status is 302

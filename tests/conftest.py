@@ -125,6 +125,12 @@ _TASTY_RECIPE_1 = {
 
 @pytest.fixture(scope='session')
 def app():
+    import os
+    os.environ.setdefault('FOOD_RECIPE_DATABASE_USERNAME', 'testUsername')
+    os.environ.setdefault('FOOD_RECIPE_DATABASE_PASSWORD', 'testPassword')
+    os.environ.setdefault('FOOD_RECIPE_DATABASE_HOSTNAME', 'localhost')
+    # Override full URI so mongomock receives plain mongodb:// (not SRV) for localhost testing.
+    os.environ['MONGO_URI'] = 'mongodb://localhost/db'
     sys.modules.pop('main', None)
     with patch('pymongo.MongoClient', mongomock.MongoClient):
         import main as _main

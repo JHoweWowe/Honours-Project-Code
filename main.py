@@ -15,6 +15,8 @@ except ImportError:
 
 
 def _get_mongo_uri():
+    if os.environ.get('MONGO_URI'):
+        return os.environ['MONGO_URI']
     cfg = configparser.ConfigParser()
     cfg.read('settings.ini')
 

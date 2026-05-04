@@ -39,3 +39,37 @@ Feature: Recipe Search
   Scenario: No matching results shows empty state message
     When I search with cuisine filter "NonexistentCuisine"
     Then the page contains "None Found"
+
+  Scenario: Include ingredient filter returns matching recipes
+    When I search with include filter "spaghetti"
+    Then the response status is 200
+    And the page contains "Simple Pasta Bolognese"
+
+  Scenario: Include ingredient filter excludes non-matching recipes
+    When I search with include filter "spaghetti"
+    Then the page does not contain "Vegan Buddha Bowl"
+
+  Scenario: Exclude ingredient filter hides matching recipes
+    When I search with exclude filter "spaghetti"
+    Then the response status is 200
+    And the page does not contain "Simple Pasta Bolognese"
+
+  Scenario: Sort by popularity returns 200
+    When I search sorted by "popularity"
+    Then the response status is 200
+
+  Scenario: Sort by time returns 200
+    When I search sorted by "time"
+    Then the response status is 200
+
+  Scenario: Sort by price returns 200
+    When I search sorted by "price"
+    Then the response status is 200
+
+  Scenario: Invalid time parameter is handled gracefully
+    When I search with time parameter "abc"
+    Then the response status is 200
+
+  Scenario: Invalid page parameter is handled gracefully
+    When I search with page parameter "abc"
+    Then the response status is 200

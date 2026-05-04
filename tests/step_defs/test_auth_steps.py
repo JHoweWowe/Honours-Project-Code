@@ -31,3 +31,8 @@ def sign_out(logged_in_client):
 @when('I visit the login page while authenticated', target_fixture='response')
 def visit_login_authenticated(logged_in_client):
     return logged_in_client.get('/auth/login', follow_redirects=False)
+
+
+@when('I visit the login page while unauthenticated', target_fixture='response')
+def visit_login_unauthenticated(client):
+    return client.get('/auth/login', follow_redirects=False)
