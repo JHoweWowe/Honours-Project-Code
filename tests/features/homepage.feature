@@ -12,7 +12,7 @@ Feature: Homepage
 
   Scenario: Featured recipes section is rendered
     When I visit the homepage
-    Then the page contains "Featured Student Recipes"
+    Then the page contains "Featured Recipes"
 
   Scenario: Cuisine browser is rendered
     When I visit the homepage

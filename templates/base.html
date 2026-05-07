@@ -3,19 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='recipe.css') }}">
-    <title>{% block title %} {% endblock %} - JustCookStudent</title>
+    <meta name="description" content="{% block meta_description %}Find budget-friendly recipes that fit your cooking time and dietary needs. Filter by time, diet, and ingredients.{% endblock %}">
 
-    <!-- Bootstrap CSS and Icons -->
+    <!-- CDN preconnect: Bootstrap, Bootstrap Icons, Tom Select, jQuery, Popper all served from cdn.jsdelivr.net -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <title>{% block title %} {% endblock %} - JustCook</title>
+
+    <!-- Bootstrap CSS and Icons — must load before our overrides -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+    <!-- Custom overrides — after Bootstrap so our rules win -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='recipe.css') }}">
+
+    <!-- Tom Select CSS — async to avoid render-blocking (only used on index page) -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet"></noscript>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;700;900&family=Roboto:wght@400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;700;900&family=Roboto:wght@400&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;600;700;900&family=Roboto:wght@400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;600;700;900&family=Roboto:wght@400&display=swap" rel="stylesheet"></noscript>
+
+    {% block head_extra %}{% endblock %}
 </head>
 
 <body>
@@ -28,38 +42,47 @@
     <!-- HEADER -->
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" id="nav-title" href="{{ url_for('main.index') }}">JustCookStudent</a>
+            <a class="navbar-brand" id="nav-title" href="{{ url_for('main.index') }}">JustCook</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-row flex-wrap">
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">About</a>
-                    </li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <span class="nav-link">{{ current_user.display_name }}</span>
+                        <span class="nav-link nav-user-name">
+                            <i class="bi bi-person-circle" aria-hidden="true"></i> {{ current_user.display_name }}
+                        </span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sign Out
+                        </a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">Sign In with Google</a>
+                        <a class="nav-link nav-link-signin" href="{{ url_for('auth.login') }}">
+                            <i class="bi bi-person-check" aria-hidden="true"></i> Sign In
+                        </a>
                     </li>
                     {% endif %}
                 </ul>
-                <ul class="navbar-nav flex-row flex-wrap">
+                <ul class="navbar-nav flex-row flex-wrap" id="nav-quick-links">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.search', q='', time=45, dq='Vegetarian', include='', exclude='', sort='relevance') }}">Eat Your Veggies</a>
+                        <a class="nav-link nav-link-feature" href="{{ url_for('main.search', q='', time=45, dq='Vegetarian', include='', exclude='', sort='relevance') }}" aria-label="Browse vegetarian recipes under 45 minutes">
+                            <i class="bi bi-leaf" aria-hidden="true"></i> Eat Your Veggies
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.search', q='', time=30, dq='', include='', exclude='', sort='time') }}">Fast Meal Prep</a>
+                        <a class="nav-link nav-link-feature" href="{{ url_for('main.search', q='', time=30, dq='', include='', exclude='', sort='time') }}" aria-label="Browse quick recipes under 30 minutes">
+                            <i class="bi bi-lightning-charge" aria-hidden="true"></i> Fast Meal Prep
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.search', q='', time=0, dq='', include='', exclude='', sort='price') }}">Cheap Recipes</a>
+                        <a class="nav-link nav-link-feature" href="{{ url_for('main.search', q='', time=0, dq='', include='', exclude='', sort='price') }}" aria-label="Browse recipes sorted by lowest price per serving">
+                            <i class="bi bi-piggy-bank" aria-hidden="true"></i> Cheap Recipes
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -78,7 +101,7 @@
                     Developed with Passion, Deployed on Heroku.
                 </div>
                 <div id="footer-right" class="col-md-4">
-                    <p>© 2022-2026 <a id="justin-howe-link" href="https://justinhowe.me/" target="_blank">Justin Howe</a></p>
+                    <p>© 2022-2026 <a id="justin-howe-link" href="https://justinhowe.me/" target="_blank" rel="noopener noreferrer">Justin Howe</a></p>
                 </div>
             </div>
         </div>

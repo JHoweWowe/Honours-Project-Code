@@ -8,7 +8,7 @@ Feature: Authentication
 
   Scenario: Unauthenticated user sees sign in link
     When I visit the homepage
-    Then the page contains "Sign In with Google"
+    Then the page contains "Sign In"
     And the page does not contain "Sign Out"
 
   Scenario: Authenticated user sees their display name
@@ -17,20 +17,20 @@ Feature: Authentication
     Then the response status is 200
     And the page contains "Test User"
     And the page contains "Sign Out"
-    And the page does not contain "Sign In with Google"
+    And the page does not contain "Sign In"
 
   Scenario: Sign out clears session and returns to unauthenticated state
     Given I am logged in as a test user
     When I sign out
     Then the response status is 200
-    And the page contains "Sign In with Google"
+    And the page contains "Sign In"
     And the page does not contain "Sign Out"
 
   Scenario: Sign out clears the remember-me cookie
     Given I am logged in with remember me enabled
     When I sign out
     Then the response status is 200
-    And the page contains "Sign In with Google"
+    And the page contains "Sign In"
     And the page does not contain "Sign Out"
 
   Scenario: Login route redirects authenticated users to homepage

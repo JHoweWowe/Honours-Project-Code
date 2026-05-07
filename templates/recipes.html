@@ -5,9 +5,9 @@
     <div class="container" id="relevant-recipes-container">
         <div class="row" id="relevant-recipes-row-div">
             <div id="relevant-recipes-header-block-div">
-                <div class="col-md-12" id="relevant-recipes-title-div">
+                <div id="relevant-recipes-title-div">
                     <a href="javascript:history.back()">
-                        <img src="{{ url_for('static', filename='back_arrow.png') }}" style="width:64px; height:64px" alt="Back">
+                        <img src="{{ url_for('static', filename='back_arrow.png') }}" class="back-arrow-img" alt="Back">
                     </a>
                     {% block title %}
                     {% if query %}
@@ -20,15 +20,26 @@
                     {% endblock %}
                 </div>
                 <div id="sort-recipe-form-div" class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                      Sort By:
+                    <button class="btn btn-sort dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-sort-down" aria-hidden="true"></i> Sort By
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='relevance', cuisine=cuisine, page=1) }}">Most Relevant</a>
-                      <a class="dropdown-item" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='rating', cuisine=cuisine, page=1) }}">Highest Rating</a>
-                      <a class="dropdown-item" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='popularity', cuisine=cuisine, page=1) }}">Most Number of Ratings</a>
-                      <a class="dropdown-item" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='time', cuisine=cuisine, page=1) }}">Lowest to Highest Cooking Time</a>
-                      <a class="dropdown-item" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='price', cuisine=cuisine, page=1) }}">Lowest to Highest Price</a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                      <h6 class="dropdown-header">Sort results by</h6>
+                      <a class="dropdown-item{% if sort == 'relevance' %} active{% endif %}" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='relevance', cuisine=cuisine, page=1) }}">
+                          <i class="bi bi-stars" aria-hidden="true"></i> Most Relevant
+                      </a>
+                      <a class="dropdown-item{% if sort == 'rating' %} active{% endif %}" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='rating', cuisine=cuisine, page=1) }}">
+                          <i class="bi bi-star-fill" aria-hidden="true"></i> Highest Rating
+                      </a>
+                      <a class="dropdown-item{% if sort == 'popularity' %} active{% endif %}" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='popularity', cuisine=cuisine, page=1) }}">
+                          <i class="bi bi-people" aria-hidden="true"></i> Most Popular
+                      </a>
+                      <a class="dropdown-item{% if sort == 'time' %} active{% endif %}" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='time', cuisine=cuisine, page=1) }}">
+                          <i class="bi bi-clock" aria-hidden="true"></i> Quickest First
+                      </a>
+                      <a class="dropdown-item{% if sort == 'price' %} active{% endif %}" href="{{ url_for('main.search', q=query, time=time, dq=dq, include=include, exclude=exclude, sort='price', cuisine=cuisine, page=1) }}">
+                          <i class="bi bi-currency-pound" aria-hidden="true"></i> Cheapest First
+                      </a>
                     </div>
                 </div>
             </div>
@@ -40,25 +51,32 @@
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ d.title.capitalize() }}</h5>
-                    {% if d.cuisine %}
-                    <span class="badge bg-secondary cuisine-badge">{{ d.cuisine }}</span>
-                    {% endif %}
-                    {% if d.prices and d.prices | length > 1 and d.prices[1] %}
-                    <span class="badge bg-success price-badge">£{{ "%.2f"|format(d.prices[1].overall_cost_per_serving) }}/person</span>
-                    {% endif %}
-                    <p class="card-description">{{ d.description | truncate(75) }}</p>
-                    <p class="card-text">Dietary Requirements:
-                        {% if d.dietary_requirements | length == 0 %}
-                        None
-                        {% else %}
-                        {{ d.dietary_requirements | join(', ') }}
+                    <div class="recipe-badges d-flex flex-wrap gap-1">
+                      {% if d.cuisine %}
+                      <span class="badge bg-secondary cuisine-badge">{{ d.cuisine }}</span>
+                      {% endif %}
+                      {% if d.prices and d.prices | length > 1 and d.prices[1] %}
+                      <span class="badge bg-success price-badge">£{{ "%.2f"|format(d.prices[1].overall_cost_per_serving) }}/person</span>
+                      {% endif %}
+                      {% if d.total_time %}
+                      <span class="badge bg-light text-dark time-badge"><i class="bi bi-clock" aria-hidden="true"></i> {{ d.total_time }} mins</span>
+                      {% endif %}
+                    </div>
+                    <p class="card-description">{{ d.description | truncate(100) }}</p>
+                    <p class="card-text">
+                        {% if d.dietary_requirements | length > 0 %}
+                        {{ d.dietary_requirements | join(' · ') }}
                         {% endif %}
                     </p>
-                    <p class="card-text">Total Cooking Time: {{ d.total_time }} mins</p>
-                    <p class="card-text">Average Rating: {{ d.average_rating }}</p>
-                    <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>
+                    <p class="card-text card-rating">
+                        <i class="bi bi-star-fill text-warning" aria-hidden="true"></i>
+                        {{ d.average_rating }} / 5
+                        <span class="text-muted">· {{ d.number_of_ratings }} ratings</span>
+                    </p>
                     <div class="recipe-more-info-div">
-                        <a href="{{ url_for('recipes.view_recipe', id=d._id) }}" class="btn btn-primary">More Info</a>
+                        <a href="{{ url_for('recipes.view_recipe', id=d._id) }}" class="btn btn-primary w-100">
+                            View Recipe <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
             </div>

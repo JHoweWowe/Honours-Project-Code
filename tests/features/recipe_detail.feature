@@ -24,7 +24,7 @@ Feature: Recipe Detail Page
 
   Scenario: Price section is displayed
     When I view the recipe with id "507f1f77bcf86cd799439011"
-    Then the page contains "Estimated Recipe Prices"
+    Then the page contains "Pricing"
 
   Scenario: Related recipes of the same cuisine are displayed
     When I view the recipe with id "507f1f77bcf86cd799439011"

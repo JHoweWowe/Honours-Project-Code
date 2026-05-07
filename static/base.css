@@ -3,6 +3,42 @@ body {
     font-family: 'Poppins', 'Roboto', sans-serif !important;
 }
 
+/** Brand color overrides — warm forest green replaces Bootstrap blue **/
+:root {
+    --bs-primary: #1c7c4e;
+    --bs-primary-rgb: 28, 124, 78;
+    --bs-link-color: #1c7c4e;
+    --bs-link-hover-color: #155e3a;
+}
+.btn-primary {
+    background-color: #1c7c4e;
+    border-color: #1c7c4e;
+    color: #fff;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #155e3a;
+    border-color: #155e3a;
+    color: #fff;
+}
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+    background-color: #115030;
+    border-color: #115030;
+    color: #fff;
+}
+.btn-primary:focus,
+.btn-primary.focus {
+    box-shadow: 0 0 0 0.25rem rgba(28, 124, 78, 0.5);
+}
+
+/** Form switch — green track when checked **/
+.form-check-input:checked {
+    background-color: #1c7c4e;
+    border-color: #1c7c4e;
+}
+
 /** Page fade-in on load **/
 .content {
     animation: fadeIn 0.2s ease-out;
@@ -27,7 +63,7 @@ body {
     width: 40px;
     height: 40px;
     border: 4px solid #dee2e6;
-    border-top-color: #0d6efd;
+    border-top-color: #1c7c4e;
     border-radius: 50%;
     animation: spin 0.75s linear infinite;
 }
@@ -36,17 +72,48 @@ body {
 /** Navbar **/
 #nav-title {
     margin-left: 0.5rem;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1.5rem;
+    letter-spacing: -0.01em;
 }
 .nav-item {
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 #navbarNav .nav-link {
-    color: rgba(0,0,0,0.8) !important;
+    color: rgba(0,0,0,0.72) !important;
+    border-radius: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 #navbarNav .nav-link:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    background: rgba(0,0,0,0.06);
+    color: rgba(0,0,0,0.9) !important;
+}
+.nav-link-feature {
+    font-weight: 500;
+}
+.nav-link-feature i {
+    opacity: 0.75;
+}
+.nav-link-muted {
+    opacity: 0.5;
+}
+.nav-user-name {
+    font-weight: 500;
+    color: rgba(0,0,0,0.6) !important;
+}
+#nav-quick-links {
+    border-top: 1px solid rgba(0,0,0,0.07);
+    padding-top: 2px;
+    margin-top: 2px;
+}
+
+/** Global heading weight — Poppins 700 reads too heavy at large sizes **/
+h1 {
+    font-weight: 600;
+}
+h2 {
+    font-weight: 600;
 }
 
 /** Mobile navbar: col-6 style grid with spacing **/
@@ -65,31 +132,138 @@ body {
         padding-top: 0.5rem;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
     }
+    #nav-quick-links {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 0;
+    }
 }
 
 /** Hero search **/
 #outer-search-container {
     background-image: url(../default_image.jpg);
     background-size: cover;
+    background-position: center;
     z-index: 100;
     position: relative;
+    overflow: hidden;
+}
+#outer-search-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.52);
+    z-index: 1;
 }
 #search-container {
-    min-height: 50vh;
+    min-height: 60vh;
+    position: relative;
+    z-index: 2;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 2.5rem 1rem;
+    gap: 0.6rem;
 }
-#advanced-search-title {
+
+/** Hero tagline **/
+#hero-tagline-text {
+    color: white;
+    font-size: clamp(1rem, 3.5vw, 1.35rem);
+    font-weight: 500;
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.01em;
+    margin: 0 0 0.4rem;
+    max-width: 480px;
+    opacity: 0.95;
+}
+
+/** Filter rows **/
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+}
+.filter-label {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.78rem;
     font-weight: 700;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
+.filter-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/** Pill toggle buttons on dark hero **/
+.filter-btn-group .btn-outline-light {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.78rem;
+    padding: 3px 11px;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.filter-btn-group .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.75);
+    color: white;
+}
+.filter-btn-group .btn-check:checked + .btn-outline-light {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: white;
+    color: #212529;
+    font-weight: 600;
+}
+
+/** Ingredients Tom Select row **/
+#ingredients-filter-row {
+    align-items: flex-start;
+    margin-top: 8px;
+}
+#ingredients-filter-row .row {
+    width: 100%;
+}
+
+/** Tom Select overrides for hero dark background **/
+.ts-wrapper .ts-control {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    border-radius: 6px !important;
+    min-height: 36px !important;
+    font-size: 0.875rem !important;
+}
+.ts-wrapper .ts-control .item {
+    background: #1c7c4e !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 1px 8px !important;
+    font-size: 0.78rem !important;
+    border: none !important;
+}
+.ts-wrapper.focus .ts-control {
+    box-shadow: 0 0 0 0.2rem rgba(28, 124, 78, 0.35) !important;
+}
+.ts-dropdown {
+    border-radius: 6px !important;
+    font-size: 0.875rem !important;
+}
+
 #test-submit {
-    width: 100vw;
+    width: 100%;
+    max-width: 540px;
 }
 
 /** Featured recipes **/
 #featured-recipes-container {
-    margin: 32px auto;
+    margin: 0.75rem auto;
 }
 
 /** Shared 3rem side padding — keeps both recipe sections visually consistent **/
@@ -99,17 +273,16 @@ body {
     padding-right: 3rem;
 }
 #featured-student-recipes-title {
-    font-weight: 700;
+    font-weight: 600;
 }
 .card-title {
-    font-weight: 700;
-    font-size: 1.75rem;
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 .card-text {
     margin-bottom: 4px;
 }
 .card-img {
-    width: 270px;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     background-color: #e9ecef;
@@ -126,37 +299,63 @@ body {
 }
 
 /** Recipe badges **/
-.cuisine-badge {
-    font-size: 0.75rem;
-    margin-right: 4px;
+.recipe-badges {
     margin-bottom: 6px;
-    align-self: flex-start;
 }
-.price-badge {
+.cuisine-badge, .price-badge, .time-badge {
     font-size: 0.75rem;
-    margin-bottom: 6px;
-    align-self: flex-start;
+    font-weight: 500;
+    border: 1px solid;
+}
+.bi-clock {
+    margin-right: 0.125rem;
 }
 
+/** Card rating line **/
+.card-rating {
+    font-size: 0.875rem;
+    color: #495057;
+}
+.card-rating .bi-star-fill {
+    font-size: 0.8rem;
+    margin-right: 2px;
+}
+
+
+#relevant-recipes-header-block-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 8px auto;
+    flex-wrap: wrap;
+}
 
 #relevant-recipes-title-div {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.back-arrow-img {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
 }
 
 #block-title {
-    margin-left: 1rem;
-    font-size: calc(2rem + 1.25vw);
-    font-weight: 700;
+    margin-left: 0.5rem;
+    font-size: calc(1.5rem + 1vw);
+    font-weight: 600;
     flex: 1;
+    letter-spacing: -0.01em;
+    word-break: break-word;
 }
 
 #relevant-recipes-row-div {
     justify-content: center;
-}
-#relevant-recipes-header-block-div {
-    margin: 8px auto;
 }
 
 #featured-recipe-container, #relevant-recipe-container {
@@ -171,12 +370,86 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-#sort-recipe-form {
-    width: 8rem;
-}
 #sort-recipe-form-div {
-    margin: 8px auto 8px;
+    flex-shrink: 0;
+}
+
+/** Sort button — clean outline style matching the app's primary accent **/
+.btn-sort {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    color: #343a40;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+}
+.btn-sort:hover,
+.btn-sort:focus {
+    background: #f8f9fa;
+    border-color: #1c7c4e;
+    color: #1c7c4e;
+    box-shadow: 0 0 0 3px rgba(28,124,78,0.12);
+    outline: none;
+}
+.btn-sort.show {
+    background: #f0faf4;
+    border-color: #1c7c4e;
+    color: #1c7c4e;
+}
+.btn-sort i {
+    margin-right: 4px;
+    opacity: 0.8;
+}
+
+/** Sort dropdown menu polish **/
+#sort-recipe-form-div .dropdown-menu {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+    padding: 6px;
+    min-width: 200px;
+}
+#sort-recipe-form-div .dropdown-header {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6c757d;
+    padding: 4px 10px 6px;
+}
+#sort-recipe-form-div .dropdown-item {
+    border-radius: 6px;
+    font-size: 0.875rem;
+    padding: 7px 12px;
+    color: #343a40;
     display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.12s ease;
+}
+#sort-recipe-form-div .dropdown-item i {
+    color: #6c757d;
+    font-size: 0.85rem;
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+#sort-recipe-form-div .dropdown-item:hover {
+    background: #f0faf4;
+    color: #1c7c4e;
+}
+#sort-recipe-form-div .dropdown-item:hover i {
+    color: #1c7c4e;
+}
+#sort-recipe-form-div .dropdown-item.active {
+    background: #1c7c4e;
+    color: #fff;
+}
+#sort-recipe-form-div .dropdown-item.active i {
+    color: rgba(255,255,255,0.85);
 }
 
 /** Pagination **/
@@ -194,34 +467,9 @@ body {
     min-width: 90px;
 }
 
-/** Cuisine browsing **/
-#cuisine-browse-container {
-    margin: 32px auto;
-}
-#cuisine-browse-title {
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-#cuisine-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.cuisine-pill {
-    display: inline-block;
-    padding: 6px 16px;
-    border-radius: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    color: #212529;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-.cuisine-pill:hover {
-    background-color: #0d6efd;
-    color: white;
-    border-color: #0d6efd;
+/** Cuisine filter row — inherits hero pill styling via .filter-btn-group **/
+#cuisine-filter-row {
+    align-items: flex-start;
 }
 
 footer {
@@ -229,15 +477,27 @@ footer {
     padding: 8px 0px;
 }
 footer .row {
-    text-align: center;
+    margin: 4px auto;
 }
 #footer-left, #footer-right {
     text-align: center;
-    margin-top: 16px;
+}
+/** Footer links — dark text on light background meets WCAG AA contrast (7:1) **/
+#justin-howe-link {
+    color: #212529;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+#justin-howe-link:hover {
+    color: #0d6efd;
 }
 
 /** Screens ≥768px **/
 @media screen and (min-width: 768px) {
+    .back-arrow-img {
+        width: 48px;
+        height: 48px;
+    }
     #nav-title {
         font-size: 3rem;
     }
@@ -246,10 +506,14 @@ footer .row {
         align-items: flex-end;
     }
     #search-container {
-        min-height: 75vh;
+        min-height: 80vh;
+    }
+    #hero-tagline-text {
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
     }
     #test-submit {
         width: 50vw;
+        max-width: 700px;
     }
     #featured-recipe-container {
         margin: 0px 8px;
@@ -277,9 +541,8 @@ footer .row {
 
 /** Print styles **/
 @media print {
-    nav, footer, #options-container, #price-container,
-    #recipeMoreInformationAccordion, #print-btn,
-    #related-recipes-container, #page-loader {
+    nav, footer, #options-col, #options-container, #price-container,
+    #print-btn, #related-recipes-container, #page-loader {
         display: none !important;
     }
     #relevant-recipes-title-div img { display: none; }
