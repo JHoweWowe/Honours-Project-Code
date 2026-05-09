@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
     <title>{% block title %} {% endblock %} - JustCook</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 
     <!-- Bootstrap CSS and Icons — must load before our overrides -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
@@ -30,6 +31,17 @@
     <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;600;700;900&family=Roboto:wght@400&display=swap" rel="stylesheet"></noscript>
 
     {% block head_extra %}{% endblock %}
+
+    {% if config.GA4_MEASUREMENT_ID %}
+    <!-- Google Analytics 4 — only rendered when GA4_MEASUREMENT_ID env var is set -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.GA4_MEASUREMENT_ID }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ config.GA4_MEASUREMENT_ID }}');
+    </script>
+    {% endif %}
 </head>
 
 <body>
@@ -51,10 +63,27 @@
                 <ul class="navbar-nav flex-row flex-wrap">
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <span class="nav-link nav-user-name">
+                        <a class="nav-link nav-user-name" href="{{ url_for('profile.view') }}">
                             <i class="bi bi-person-circle" aria-hidden="true"></i> {{ current_user.display_name }}
-                        </span>
+                        </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('submit.submit_form') }}">
+                            <i class="bi bi-plus-circle" aria-hidden="true"></i> Submit Recipe
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('submit.my_submissions') }}">
+                            <i class="bi bi-journal-text" aria-hidden="true"></i> My Submissions
+                        </a>
+                    </li>
+                    {% if current_user.email in config['ADMIN_EMAILS'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('submit.admin_recipes') }}">
+                            <i class="bi bi-shield-check" aria-hidden="true"></i> Admin
+                        </a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.logout') }}">
                             <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sign Out

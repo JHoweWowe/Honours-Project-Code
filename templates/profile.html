@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container" id="profile-container" style="max-width: 680px; padding-top: 2rem; padding-bottom: 3rem;">
+
+    <h1 class="mb-1">
+        <i class="bi bi-person-circle" aria-hidden="true"></i> My Profile
+    </h1>
+    <p class="text-muted mb-4">{{ current_user.email }}</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('profile.update') }}" novalidate>
+
+        <!-- ── About You ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">About You</legend>
+
+            <div class="mb-3">
+                <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                <input type="text"
+                       id="first_name"
+                       name="first_name"
+                       class="form-control"
+                       value="{{ user_doc.get('first_name') or user_doc.get('display_name', '') }}"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date of Birth</label>
+                <input type="date"
+                       id="dob"
+                       name="dob"
+                       class="form-control"
+                       value="{{ dob_str }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="household_size" class="form-label">Household Size</label>
+                <input type="number"
+                       id="household_size"
+                       name="household_size"
+                       class="form-control"
+                       min="1" max="20"
+                       value="{{ user_doc.get('household_size', '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text"
+                       id="location"
+                       name="location"
+                       class="form-control"
+                       placeholder="e.g. United Kingdom"
+                       value="{{ user_doc.get('location', '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="postcode" class="form-label">
+                    Postcode / Zip Code
+                    <span class="text-muted fw-normal small">(optional — used to find stores near you)</span>
+                </label>
+                <input type="text"
+                       id="postcode"
+                       name="postcode"
+                       class="form-control"
+                       placeholder="e.g. SW1A 1AA, 238859, 10001"
+                       maxlength="10"
+                       value="{{ user_doc.get('postcode', '') }}">
+            </div>
+        </fieldset>
+
+        <!-- ── Cooking Preferences ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">Cooking Preferences</legend>
+
+            <div class="mb-3">
+                <label for="skill_level" class="form-label">Cooking Skill Level</label>
+                <select id="skill_level" name="skill_level" class="form-select">
+                    <option value="">— select —</option>
+                    {% for level in skill_levels %}
+                    <option value="{{ level }}"
+                        {% if user_doc.get('skill_level') == level %}selected{% endif %}>
+                        {{ level | capitalize }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="cooking_frequency" class="form-label">How Often Do You Cook?</label>
+                <select id="cooking_frequency" name="cooking_frequency" class="form-select">
+                    <option value="">— select —</option>
+                    {% for freq in cook_freqs %}
+                    <option value="{{ freq }}"
+                        {% if user_doc.get('cooking_frequency') == freq %}selected{% endif %}>
+                        {{ freq | capitalize }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="max_budget_gbp" class="form-label">Max Budget per Serving</label>
+                <div class="input-group">
+                    <span class="input-group-text">£</span>
+                    <input type="number"
+                           id="max_budget_gbp"
+                           name="max_budget_gbp"
+                           class="form-control"
+                           min="0" step="0.50"
+                           value="{{ user_doc.get('max_budget_gbp', '') }}">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- ── Dietary Preferences ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">Dietary Preferences</legend>
+            <div class="row g-2">
+                {% for opt in dietary_options %}
+                <div class="col-6 col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="dietary_prefs"
+                               id="diet-{{ opt | lower | replace(' ', '-') }}"
+                               value="{{ opt }}"
+                               {% if opt in user_doc.get('dietary_prefs', []) %}checked{% endif %}>
+                        <label class="form-check-label"
+                               for="diet-{{ opt | lower | replace(' ', '-') }}">
+                            {{ opt }}
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <!-- ── Preferred Cuisines ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">Preferred Cuisines</legend>
+            <label for="preferred-cuisines-input" class="form-label">
+                Select cuisines you enjoy — used to personalise recipe recommendations
+            </label>
+            <select id="preferred-cuisines-input"
+                    name="preferred_cuisines"
+                    multiple
+                    class="form-select">
+                {% for cuisine in cuisines %}
+                <option value="{{ cuisine }}"
+                    {% if cuisine in user_doc.get('preferred_cuisines', []) %}selected{% endif %}>
+                    {{ cuisine }}
+                </option>
+                {% endfor %}
+            </select>
+        </fieldset>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-check-lg" aria-hidden="true"></i> Save Profile
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+    new TomSelect('#preferred-cuisines-input', {
+        plugins: ['remove_button'],
+        maxOptions: null,
+        placeholder: 'Search cuisines…',
+    });
+</script>
+{% endblock %}

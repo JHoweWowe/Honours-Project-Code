@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, current_app
 from bson.objectid import ObjectId
 
+from routes.stores import COUNTRIES
+
 bp = Blueprint('recipes', __name__)
 
 
@@ -26,4 +28,4 @@ def view_recipe(id):
                 ).limit(3 - len(related))
             )
 
-    return render_template('recipe.html', id=id, recipe_data=recipe_data or {}, related=related)
+    return render_template('recipe.html', id=id, recipe_data=recipe_data or {}, related=related, countries=COUNTRIES)

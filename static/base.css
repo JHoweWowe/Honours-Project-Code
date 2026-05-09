@@ -472,6 +472,19 @@ h2 {
     align-items: flex-start;
 }
 
+/** Profile page — section legend style **/
+.profile-section-legend {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #6c757d;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+    width: 100%;
+}
+
 footer {
     background-color: #f8f9fa;
     padding: 8px 0px;

@@ -1,7 +1,4 @@
 {% extends 'base.html' %}
-<head>
-  <title>{% block title %} Main {% endblock %}</title>
-</head>
 
 {% block meta_description %}Find budget-friendly recipes that fit your cooking time and dietary needs. Browse by cuisine, filter by time, diet type, or ingredients.{% endblock %}
 
@@ -67,16 +64,16 @@
                 </div>
             </div>
             
-            <!-- Cuisine quick-links row -->
+            <!-- Cuisine quick-links row — top 5 by recipe count, dynamic from DB -->
             <div class="filter-row" id="cuisine-filter-row">
                 <span class="filter-label">Cuisine:</span>
                 <div class="filter-btn-group">
-                    <!-- TODO: Implement cuisines which are suitable -->
-                    <input type="checkbox" class="btn-check" name="cuisine" id="cuisine-American" value="American" autocomplete="off">
-                    <label class="btn btn-outline-light btn-sm rounded-pill" for="cuisine-American">American</label>
-
-                    <input type="checkbox" class="btn-check" name="cuisine" id="cuisine-Mediterranean" value="Mediterranean" autocomplete="off">
-                    <label class="btn btn-outline-light btn-sm rounded-pill" for="cuisine-Mediterranean">Mediterranean</label>
+                    <input type="radio" class="btn-check" name="cuisine" id="cuisine-any" value="" checked autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="cuisine-any">Any</label>
+                    {% for c in top_cuisines %}
+                    <input type="radio" class="btn-check" name="cuisine" id="cuisine-{{ c | lower | replace(' ', '-') }}" value="{{ c }}" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="cuisine-{{ c | lower | replace(' ', '-') }}">{{ c }}</label>
+                    {% endfor %}
                 </div>
             </div>
 

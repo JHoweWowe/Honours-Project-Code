@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit a Recipe{% endblock %}
+{% block meta_description %}Share your favourite recipe with the JustCook community. Submitted recipes are reviewed before appearing in search results.{% endblock %}
+
+{% block head_extra %}
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet"></noscript>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 680px; padding-top: 2rem; padding-bottom: 3rem;">
+
+    <h1 class="mb-1">
+        <i class="bi bi-plus-circle" aria-hidden="true"></i> Submit a Recipe
+    </h1>
+    <p class="text-muted mb-4">Your recipe will appear in search results after a quick review.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('submit.submit_recipe') }}" novalidate>
+
+        <!-- ── Basic Info ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">Basic Info</legend>
+
+            <div class="mb-3">
+                <label for="title" class="form-label">Recipe Title <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="title" name="title" maxlength="100" placeholder="e.g. Creamy Tomato Pasta" required>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="cuisine-input" class="form-label">Cuisine</label>
+                    <select id="cuisine-input" name="cuisine" class="form-select">
+                        <option value="">Any / not specified</option>
+                        {% for c in cuisines %}
+                        <option value="{{ c }}">{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="total_time" class="form-label">Cook time (minutes)</label>
+                    <input type="number" class="form-control" id="total_time" name="total_time" min="1" max="720" placeholder="e.g. 30">
+                </div>
+                <div class="col-md-4">
+                    <label for="servings" class="form-label">Servings</label>
+                    <input type="number" class="form-control" id="servings" name="servings" min="1" max="99" value="2">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- ── Ingredients ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">Ingredients <span class="text-danger">*</span></legend>
+            <label for="ingredients" class="form-label text-muted" style="font-size:0.875rem;">One ingredient per line, e.g. <em>200g pasta</em></label>
+            <textarea class="form-control" id="ingredients" name="ingredients" rows="8"
+                placeholder="200g spaghetti&#10;2 cloves garlic&#10;400g tinned tomatoes&#10;..." required></textarea>
+        </fieldset>
+
+        <!-- ── Method ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">Method <span class="text-danger">*</span></legend>
+            <label for="steps" class="form-label text-muted" style="font-size:0.875rem;">One step per line</label>
+            <textarea class="form-control" id="steps" name="steps" rows="8"
+                placeholder="Boil salted water and cook pasta until al dente.&#10;Fry garlic in olive oil for 1 minute.&#10;..." required></textarea>
+        </fieldset>
+
+        <!-- ── Dietary & Image ── -->
+        <fieldset class="mb-4">
+            <legend class="profile-section-legend">Dietary Tags &amp; Image</legend>
+
+            <label class="form-label d-block mb-2">Dietary suitability (optional)</label>
+            <div class="row g-2 mb-3">
+                {% for tag in dietary_options %}
+                <div class="col-6 col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="dietary_tags" id="tag-{{ tag|lower|replace(' ','-')|replace('/','-') }}" value="{{ tag }}">
+                        <label class="form-check-label" for="tag-{{ tag|lower|replace(' ','-')|replace('/','-') }}">{{ tag }}</label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="image_url" class="form-label">Image URL (optional)</label>
+                <input type="url" class="form-control" id="image_url" name="image_url" placeholder="https://example.com/my-recipe.jpg">
+                <div class="form-text">Paste a direct link to an image. Leave blank to use the default placeholder.</div>
+            </div>
+        </fieldset>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-send" aria-hidden="true"></i> Submit Recipe
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+    new TomSelect('#cuisine-input', {
+        placeholder: 'Search cuisine…',
+        allowEmptyOption: true,
+    });
+</script>
+{% endblock %}

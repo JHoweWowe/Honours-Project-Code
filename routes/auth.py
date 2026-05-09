@@ -27,6 +27,7 @@ class User:
         self.google_id = doc.get('google_id', '')
         self.email = doc.get('email', '')
         self.display_name = doc.get('display_name', '')
+        self.postcode = doc.get('postcode', '')
 
     @property
     def is_authenticated(self):

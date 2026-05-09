@@ -52,6 +52,11 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ d.title.capitalize() }}</h5>
                     <div class="recipe-badges d-flex flex-wrap gap-1">
+                      {% if d.source == 'user' %}
+                      <span class="badge" style="background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;font-size:0.72rem;">
+                          <i class="bi bi-people" aria-hidden="true"></i> Community
+                      </span>
+                      {% endif %}
                       {% if d.cuisine %}
                       <span class="badge bg-secondary cuisine-badge">{{ d.cuisine }}</span>
                       {% endif %}

@@ -50,15 +50,29 @@ def create_app():
     mongo.db.tasty.create_index(
         [('title', TEXT), ('description', TEXT)], default_language='english'
     )
+    mongo.db.user_recipes.create_index(
+        [('title', TEXT), ('description', TEXT)], default_language='english'
+    )
     app.mongo = mongo
+
+    app.config['ADMIN_EMAILS'] = [os.environ.get('ADMIN_EMAIL', 'howejust@gmail.com')]
+    app.config['GA4_MEASUREMENT_ID'] = os.environ.get('GA4_MEASUREMENT_ID', '')
+
+    app.config['GEOAPIFY_API_KEY'] = os.environ.get('GEOAPIFY_API_KEY', '')
 
     from routes.main import bp as main_bp
     from routes.recipes import bp as recipes_bp
     from routes.auth import bp as auth_bp, google_bp
+    from routes.profile import bp as profile_bp
+    from routes.submit import bp as submit_bp
+    from routes.stores import bp as stores_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(recipes_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(google_bp, url_prefix='/auth')
+    app.register_blueprint(profile_bp)
+    app.register_blueprint(submit_bp)
+    app.register_blueprint(stores_bp)
 
     return app
 
