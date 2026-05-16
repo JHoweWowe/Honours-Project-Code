@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block head_extra %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='recipe.css') }}?v={{ config.ASSET_VERSION }}">
+{% endblock %}
+
 {% block content %}
 <div class="container" id="recipe-page-container">
 
@@ -251,7 +255,7 @@
             {% for r in related %}
             <div class="col-md-4">
                 <div class="card related-recipe-card">
-                    <img src="{{ r.image_url }}" loading="lazy" class="card-img-top related-card-img" alt="{{ r.title }}">
+                    <img src="{{ r.image_url }}" loading="lazy" decoding="async" width="240" height="180" class="card-img-top related-card-img" alt="{{ r.title }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='default_image.webp') }}'">
                     <div class="card-body">
                         <h5 class="card-title">{{ r.title }}</h5>
                         <p class="card-text">{{ r.total_time }} mins &middot; {{ r.average_rating }}/5</p>

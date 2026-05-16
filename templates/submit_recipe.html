@@ -4,8 +4,8 @@
 {% block meta_description %}Share your favourite recipe with the JustCook community. Submitted recipes are reviewed before appearing in search results.{% endblock %}
 
 {% block head_extra %}
-<link rel="preload" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet"></noscript>
+<link rel="preload" href="{{ url_for('static', filename='tom-select.bootstrap5.min.css') }}?v={{ config.ASSET_VERSION }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="{{ url_for('static', filename='tom-select.bootstrap5.min.css') }}?v={{ config.ASSET_VERSION }}" rel="stylesheet"></noscript>
 {% endblock %}
 
 {% block content %}
@@ -106,7 +106,7 @@
     </form>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script src="{{ url_for('static', filename='tom-select.complete.min.js') }}?v={{ config.ASSET_VERSION }}"></script>
 <script>
     new TomSelect('#cuisine-input', {
         placeholder: 'Search cuisine…',

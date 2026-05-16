@@ -1,6 +1,7 @@
 /** Mobile-first responsive design **/
 body {
-    font-family: 'Poppins', 'Roboto', sans-serif !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 100 !important;
 }
 
 /** Brand color overrides — warm forest green replaces Bootstrap blue **/
@@ -141,12 +142,18 @@ h2 {
 
 /** Hero search **/
 #outer-search-container {
-    background-image: url(../default_image.jpg);
-    background-size: cover;
-    background-position: center;
     z-index: 100;
     position: relative;
     overflow: hidden;
+}
+.hero-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 0;
 }
 #outer-search-container::before {
     content: '';
@@ -496,13 +503,18 @@ footer .row {
     text-align: center;
 }
 /** Footer links — dark text on light background meets WCAG AA contrast (7:1) **/
-#justin-howe-link {
-    color: #212529;
+#justin-howe-link,
+.footer-link {
+    color: #212529 !important;
     text-decoration: underline;
     text-underline-offset: 2px;
 }
-#justin-howe-link:hover {
-    color: #0d6efd;
+#justin-howe-link:hover,
+.footer-link:hover {
+    color: #0d6efd !important;
+}
+#footer-right p {
+    margin: 0;
 }
 
 /** Screens ≥768px **/
