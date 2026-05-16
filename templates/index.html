@@ -30,6 +30,13 @@
   .mb-1{margin-bottom:.25rem!important}
   .mb-2{margin-bottom:.5rem!important}
   .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+  /* --- Search form width + hero height — prevents CLS from async base.css resizing after paint --- */
+  #test-submit{width:100%;max-width:540px}
+  @media(min-width:768px){
+    #test-submit{width:50vw;max-width:700px}
+    #search-container{min-height:80vh}
+    #hero-tagline-text{font-size:clamp(1.1rem,2vw,1.4rem)}
+  }
 </style>
 {% endblock %}
 

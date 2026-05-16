@@ -54,11 +54,42 @@
       /* --- Nav title override --- */
       #nav-title{margin-left:.5rem;font-weight:600;font-size:1.5rem;letter-spacing:-.01em}
       .form-check-input:checked{background-color:#1c7c4e;border-color:#1c7c4e}
+      /* --- Content fade-in — opacity only; translateY causes CLS --- */
+      .content{animation:fadeIn .2s ease-out}
+      @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+      /* --- Desktop navbar stacking + brand size — the 1.5rem→3rem jump is the primary navbar CLS --- */
+      @media(min-width:768px){
+        #navbarNav{flex-direction:column!important;align-items:flex-end}
+        #nav-quick-links{border-top:1px solid rgba(0,0,0,.07);padding-top:2px;margin-top:2px}
+        #nav-title{font-size:2.5rem}
+      }
+      /* --- Nav item font-size — most critical: prevents navbar height change that shifts div.content --- */
+      .nav-item{font-size:.9rem}
+      /* --- Nav font weights — prevents Poppins 400→500 weight-swap reflow in nav links --- */
+      .nav-user-name{font-weight:500;color:rgba(0,0,0,.6)!important}
+      .nav-link-feature{font-weight:500}
+      /* --- Heading weights — prevents 700→600 reflow on above-fold headings across all pages --- */
+      h1{font-weight:600}
+      h2{font-weight:600}
+      /* --- Bootstrap Icons: @font-face + base pseudo-element rule + every navbar icon glyph.
+             Inline so icons have correct content at first paint; BI CSS async load causes no shift
+             because the rules below already match what bootstrap-icons.min.css will add. --- */
+      @font-face{font-family:"bootstrap-icons";font-display:block;src:url('{{ url_for("static", filename="bootstrap-icons.woff2") }}') format("woff2")}
+      .bi::before,[class^="bi-"]::before,[class*=" bi-"]::before{display:inline-block;font-family:"bootstrap-icons"!important;font-style:normal;font-weight:normal!important;line-height:1;vertical-align:-.125em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+      .bi-person-circle::before{content:"\f4d7"}
+      .bi-plus-circle::before{content:"\f4fa"}
+      .bi-journal-text::before{content:"\f444"}
+      .bi-shield-check::before{content:"\f52f"}
+      .bi-box-arrow-right::before{content:"\f1c3"}
+      .bi-person-check::before{content:"\f4d6"}
+      .bi-lightning-charge::before{content:"\f46d"}
+      .bi-piggy-bank::before{content:"\f64a"}
     </style>
 
     <!-- 3. Poppins self-hosted — preload body (400) and heading (600) weights so the browser
             fetches them in parallel with other resources before first paint -->
     <link rel="preload" href="{{ url_for('static', filename='fonts/poppins-400.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', filename='fonts/poppins-500.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ url_for('static', filename='fonts/poppins-600.woff2') }}" as="font" type="font/woff2" crossorigin>
 
     <title>{% block title %} {% endblock %} - JustCookIt</title>

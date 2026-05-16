@@ -40,15 +40,6 @@ body {
     border-color: #1c7c4e;
 }
 
-/** Page fade-in on load **/
-.content {
-    animation: fadeIn 0.2s ease-out;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
 /** Page loading overlay **/
 #page-loader {
     display: none;
@@ -77,9 +68,6 @@ body {
     font-size: 1.5rem;
     letter-spacing: -0.01em;
 }
-.nav-item {
-    font-size: 0.9rem;
-}
 #navbarNav .nav-link {
     color: rgba(0,0,0,0.72) !important;
     border-radius: 6px;
@@ -90,31 +78,11 @@ body {
     background: rgba(0,0,0,0.06);
     color: rgba(0,0,0,0.9) !important;
 }
-.nav-link-feature {
-    font-weight: 500;
-}
 .nav-link-feature i {
     opacity: 0.75;
 }
 .nav-link-muted {
     opacity: 0.5;
-}
-.nav-user-name {
-    font-weight: 500;
-    color: rgba(0,0,0,0.6) !important;
-}
-#nav-quick-links {
-    border-top: 1px solid rgba(0,0,0,0.07);
-    padding-top: 2px;
-    margin-top: 2px;
-}
-
-/** Global heading weight — Poppins 700 reads too heavy at large sizes **/
-h1 {
-    font-weight: 600;
-}
-h2 {
-    font-weight: 600;
 }
 
 /** Mobile navbar: col-6 style grid with spacing **/
@@ -132,11 +100,6 @@ h2 {
         margin-top: 0.5rem;
         padding-top: 0.5rem;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
-    }
-    #nav-quick-links {
-        border-top: none;
-        padding-top: 0;
-        margin-top: 0;
     }
 }
 
@@ -261,11 +224,6 @@ h2 {
 .ts-dropdown {
     border-radius: 6px !important;
     font-size: 0.875rem !important;
-}
-
-#test-submit {
-    width: 100%;
-    max-width: 540px;
 }
 
 /** Featured recipes **/
@@ -524,21 +482,7 @@ footer .row {
         height: 48px;
     }
     #nav-title {
-        font-size: 3rem;
-    }
-    #navbarNav {
-        flex-direction: column !important;
-        align-items: flex-end;
-    }
-    #search-container {
-        min-height: 80vh;
-    }
-    #hero-tagline-text {
-        font-size: clamp(1.1rem, 2vw, 1.4rem);
-    }
-    #test-submit {
-        width: 50vw;
-        max-width: 700px;
+        font-size: 2.5rem;
     }
     #featured-recipe-container {
         margin: 0px 8px;
