@@ -14,6 +14,8 @@ def view_recipe(id):
     recipe_data = mongo.db.bbcgoodfood.find_one({'_id': oid})
     if recipe_data is None:
         recipe_data = mongo.db.tasty.find_one({'_id': oid})
+    if recipe_data is None:
+        recipe_data = mongo.db.user_recipes.find_one({'_id': oid, 'status': 'approved'})
 
     related = []
     if recipe_data and recipe_data.get('cuisine'):

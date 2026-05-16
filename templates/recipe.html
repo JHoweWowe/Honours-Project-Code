@@ -43,7 +43,11 @@
     <!-- OVERVIEW: image | description + tags + nutrition + credits -->
     <div class="row" id="recipe-overview-row">
         <div class="col-md-5" id="recipe-image-col">
-            <img src="{{ recipe_data.image_url }}" class="recipe-hero-img" alt="{{ recipe_data.title }}" loading="lazy">
+            <img src="{{ recipe_data.image_url or url_for('static', filename='default_image.webp') }}"
+                 class="recipe-hero-img"
+                 alt="{{ recipe_data.title }}"
+                 loading="lazy"
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='default_image.webp') }}'">
         </div>
 
         <div class="col-md-7" id="recipe-info-col">
@@ -210,7 +214,7 @@
                         class="btn btn-outline-success"
                         data-postcode="{{ current_user.postcode | e }}"
                         data-location="{{ current_user.location | lower | e }}"
-                        data-ingredients="{{ recipe_data.ingredients | tojson | forceescape }}">
+                        data-ingredients="{{ (recipe_data.ingredients or []) | tojson | forceescape }}">
                     Find Stores Near Me
                 </button>
 

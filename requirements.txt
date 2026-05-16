@@ -1,4 +1,7 @@
 certifi==2024.12.14
+cloudinary==1.41.0
+Flask-Limiter==4.1.1
+resend==2.30.1
 charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6

@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 
 from bson import ObjectId
@@ -5,7 +6,50 @@ from flask import (Blueprint, abort, current_app, flash, redirect,
                    render_template, request, url_for)
 from flask_login import current_user, login_required
 
+from extensions import limiter
 from routes.profile import DIETARY_OPTIONS
+
+_ALLOWED_MIME = {'image/jpeg', 'image/png', 'image/webp'}
+_MAX_IMAGE_BYTES = 5 * 1024 * 1024  # 5 MB
+
+
+def _send_email(to: str, subject: str, html: str) -> None:
+    """Fire-and-forget email via Resend. Never raises — email failure must not block submissions."""
+    api_key = os.environ.get('RESEND_API_KEY', '')
+    if not api_key:
+        return
+    try:
+        import resend
+        resend.api_key = api_key
+        resend.Emails.send({
+            'from': 'JustCookIt <noreply@justcookit.app>',
+            'to': [to],
+            'subject': subject,
+            'html': html,
+        })
+    except Exception:
+        pass
+
+
+def _upload_image(file_storage):
+    """Upload a werkzeug FileStorage to Cloudinary. Returns secure_url or None on failure."""
+    if not file_storage or not file_storage.filename:
+        return None
+    if file_storage.mimetype not in _ALLOWED_MIME:
+        return None
+    data = file_storage.read()
+    if len(data) > _MAX_IMAGE_BYTES:
+        return None
+    try:
+        import cloudinary.uploader
+        result = cloudinary.uploader.upload(
+            data,
+            folder='justcookit/user_recipes',
+            resource_type='image',
+        )
+        return result.get('secure_url')
+    except Exception:
+        return None
 
 bp = Blueprint('submit', __name__)
 
@@ -33,6 +77,7 @@ def submit_form():
 
 @bp.route('/submit-recipe', methods=['POST'])
 @login_required
+@limiter.limit('3 per day', key_func=lambda: str(current_user.id))
 def submit_recipe():
     mongo = current_app.mongo
     errors = []
@@ -79,7 +124,10 @@ def submit_recipe():
 
     dietary_tags = [d for d in request.form.getlist('dietary_tags') if d in DIETARY_OPTIONS]
 
-    image_url = request.form.get('image_url', '').strip() or None
+    image_file = request.files.get('image')
+    image_url = _upload_image(image_file)
+    if image_file and image_file.filename and image_url is None:
+        flash('Image could not be uploaded — recipe saved without a photo.', 'warning')
 
     is_admin = current_user.email in current_app.config.get('ADMIN_EMAILS', [])
     status = 'approved' if is_admin else 'pending'
@@ -104,6 +152,15 @@ def submit_recipe():
         flash('Recipe submitted and published immediately.', 'success')
     else:
         flash('Recipe submitted! It will appear in search results after review.', 'success')
+        admin_email = current_app.config.get('ADMIN_EMAILS', ['howejust@gmail.com'])[0]
+        _send_email(
+            to=admin_email,
+            subject=f'[JustCookIt] New recipe pending review: {title}',
+            html=(
+                f'<p><b>{current_user.email}</b> submitted a new recipe: <b>{title}</b>.</p>'
+                f'<p><a href="https://justcookit.herokuapp.com/admin/recipes">Review on admin page</a></p>'
+            ),
+        )
     return redirect(url_for('main.index'))
 
 
@@ -133,10 +190,24 @@ def approve_recipe(recipe_id):
         oid = ObjectId(recipe_id)
     except Exception:
         abort(400)
-    current_app.mongo.db.user_recipes.update_one(
+    mongo = current_app.mongo
+    doc = mongo.db.user_recipes.find_one({'_id': oid}, {'submitted_by': 1, 'title': 1})
+    mongo.db.user_recipes.update_one(
         {'_id': oid},
         {'$set': {'status': 'approved', 'moderation_note': None}},
     )
+    if doc and doc.get('submitted_by'):
+        user = mongo.db.users.find_one({'_id': doc['submitted_by']}, {'email': 1})
+        if user and user.get('email'):
+            _send_email(
+                to=user['email'],
+                subject='[JustCookIt] Your recipe has been approved!',
+                html=(
+                    f'<p>Great news! Your recipe <b>{doc.get("title", "")}</b> has been approved '
+                    f'and is now live on JustCookIt.</p>'
+                    f'<p><a href="https://justcookit.herokuapp.com/my-submissions">View your submissions</a></p>'
+                ),
+            )
     flash('Recipe approved.', 'success')
     return redirect(request.referrer or url_for('submit.admin_recipes'))
 
@@ -150,10 +221,25 @@ def reject_recipe(recipe_id):
     except Exception:
         abort(400)
     note = request.form.get('moderation_note', '').strip() or None
-    current_app.mongo.db.user_recipes.update_one(
+    mongo = current_app.mongo
+    doc = mongo.db.user_recipes.find_one({'_id': oid}, {'submitted_by': 1, 'title': 1})
+    mongo.db.user_recipes.update_one(
         {'_id': oid},
         {'$set': {'status': 'rejected', 'moderation_note': note}},
     )
+    if doc and doc.get('submitted_by'):
+        user = mongo.db.users.find_one({'_id': doc['submitted_by']}, {'email': 1})
+        if user and user.get('email'):
+            note_html = f'<p>Reason: {note}</p>' if note else ''
+            _send_email(
+                to=user['email'],
+                subject='[JustCookIt] Update on your recipe submission',
+                html=(
+                    f'<p>Your recipe <b>{doc.get("title", "")}</b> was not approved at this time.</p>'
+                    f'{note_html}'
+                    f'<p><a href="https://justcookit.herokuapp.com/my-submissions">View your submissions</a></p>'
+                ),
+            )
     flash('Recipe rejected.', 'warning')
     return redirect(request.referrer or url_for('submit.admin_recipes'))
 

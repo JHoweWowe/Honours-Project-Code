@@ -7,7 +7,7 @@ from flask_login import current_user, login_required
 
 bp = Blueprint('profile', __name__, url_prefix='/profile')
 
-DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Pescatarian']
+DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Pescatarian', 'Dairy-Free', 'Nut-Free', 'Halal']
 SKILL_LEVELS = ['beginner', 'intermediate', 'advanced']
 COOK_FREQS = ['rarely', 'sometimes', 'somewhat often', 'often', 'daily']
 

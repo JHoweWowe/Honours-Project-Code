@@ -99,6 +99,15 @@
 
                     <input type="checkbox" class="btn-check" name="dq" id="dq-pesc" value="Pescatarian" autocomplete="off">
                     <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-pesc">Pescatarian</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-dairy" value="Dairy-Free" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-dairy">Dairy-Free</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-nut" value="Nut-Free" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-nut">Nut-Free</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-halal" value="Halal" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-halal">Halal</label>
                 </div>
             </div>
             
@@ -137,7 +146,9 @@
         <div class="row" style="margin: 0px auto">
             {% if featured_recipes_data | length > 0 %}
             <div class="col-md-12">
-              <h1 id="featured-student-recipes-title">Featured Recipes</h1>
+              <h1 id="featured-student-recipes-title">
+                {% if featured_is_personalised %}Top Picks for You{% else %}Top Picks{% endif %}
+              </h1>
             </div>
               {% for d in featured_recipes_data %}
               <div class="col-md card" id="featured-recipe-container">

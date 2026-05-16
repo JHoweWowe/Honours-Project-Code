@@ -62,13 +62,10 @@
             </div>
 
             <div class="mb-3">
-                <label for="location" class="form-label">Location</label>
-                <input type="text"
-                       id="location"
-                       name="location"
-                       class="form-control"
-                       placeholder="e.g. United Kingdom"
-                       value="{{ user_doc.get('location', '') }}">
+                <label for="location-select" class="form-label">Country</label>
+                <select id="location-select" name="location" class="form-select">
+                    <option value="">— select country —</option>
+                </select>
             </div>
 
             <div class="mb-3">
@@ -188,5 +185,19 @@
         maxOptions: null,
         placeholder: 'Search cuisines…',
     });
+
+    (function () {
+        const currentLocation = {{ user_doc.get('location', '') | tojson }};
+        fetch('{{ url_for("static", filename="countries.json") }}?v={{ config.ASSET_VERSION }}')
+            .then(r => r.json())
+            .then(countries => {
+                const ts = new TomSelect('#location-select', {
+                    maxOptions: null,
+                    placeholder: 'Search country…',
+                    options: countries.map(c => ({ value: c, text: c })),
+                    items: currentLocation ? [currentLocation] : [],
+                });
+            });
+    })();
 </script>
 {% endblock %}

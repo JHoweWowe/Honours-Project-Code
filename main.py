@@ -5,7 +5,7 @@ import subprocess
 from flask import Flask, jsonify
 from pymongo import MongoClient, TEXT, DESCENDING
 
-from extensions import cache, compress, login_manager
+from extensions import cache, compress, limiter, login_manager
 
 # Load .env if python-dotenv is available (falls back to settings.ini)
 try:
@@ -54,8 +54,12 @@ def create_app():
     # ASSET_VERSION resolves in order: manual override → Heroku SOURCE_VERSION → local git SHA
     app.config['ASSET_VERSION'] = os.environ.get('ASSET_VERSION') or os.environ.get('SOURCE_VERSION', _sha)
     app.config['COMPRESS_REGISTER'] = True
+    app.config['RATELIMIT_STORAGE_URI'] = os.environ.get('REDIS_URL', 'memory://')
+    # Disable rate limiting in test environment (conftest sets MONGO_URI=mongodb://localhost/db)
+    app.config['RATELIMIT_ENABLED'] = not os.environ.get('MONGO_URI', '').startswith('mongodb://localhost')
     cache.init_app(app)
     compress.init_app(app)
+    limiter.init_app(app)
     login_manager.init_app(app)
 
     mongo = MongoClient(_get_mongo_uri())

@@ -1,5 +1,6 @@
 import math
 
+from bson import ObjectId
 from flask import Blueprint, render_template, request, current_app
 from flask_login import current_user
 from extensions import cache
@@ -7,6 +8,12 @@ from extensions import cache
 bp = Blueprint('main', __name__)
 
 PER_PAGE = 6
+
+DEFAULT_CUISINES = [
+    'American', 'British', 'Chinese', 'French', 'Greek', 'Indian',
+    'Italian', 'Japanese', 'Malaysian', 'Mediterranean', 'Mexican',
+    'Middle Eastern', 'Singaporean', 'Spanish', 'Thai', 'Vietnamese',
+]
 
 # Fields needed for recipe cards — keeps documents small across all queries
 _CARD_PROJECT = {
@@ -37,7 +44,7 @@ def _get_cached_cuisines(mongo):
             mongo.db.tasty.distinct('cuisine') +
             mongo.db.user_recipes.distinct('cuisine', {'status': 'approved'})
         )
-        cuisines = sorted({c for c in raw if c and c.strip()})
+        cuisines = sorted({c for c in raw if c and c.strip()} | set(DEFAULT_CUISINES))
         cache.set('all_cuisines', cuisines, timeout=1800)
     return cuisines
 
@@ -50,21 +57,74 @@ def _get_cached_top_cuisines(mongo, n=5):
     return top
 
 
+def _get_global_featured(mongo):
+    docs = cache.get('global_featured')
+    if docs is None:
+        match = {'average_rating': {'$gt': 4.4, '$lt': 5}}
+        raw = []
+        for col in [mongo.db.bbcgoodfood, mongo.db.tasty]:
+            raw += list(col.find(match, _CARD_PROJECT).sort('number_of_ratings', -1).limit(3))
+        raw.sort(key=lambda d: int(d.get('number_of_ratings') or 0), reverse=True)
+        docs = raw[:3]
+        cache.set('global_featured', docs, timeout=1800)
+    return docs
+
+
+def _get_featured(mongo, user_doc=None):
+    """Return (recipes, is_personalised). Falls back to global if prefs yield < 3 results."""
+    dietary = (user_doc or {}).get('dietary_prefs') or []
+    cuisines = (user_doc or {}).get('preferred_cuisines') or []
+
+    if not dietary and not cuisines:
+        return _get_global_featured(mongo), False
+
+    base_match = {'average_rating': {'$gt': 4.0, '$lt': 5}}
+
+    def _fetch(match):
+        raw = []
+        for col in [mongo.db.bbcgoodfood, mongo.db.tasty]:
+            raw += list(col.find(match, _CARD_PROJECT).sort('number_of_ratings', -1).limit(3))
+        raw.sort(key=lambda d: int(d.get('number_of_ratings') or 0), reverse=True)
+        return raw[:3]
+
+    combined = {**base_match}
+    if dietary:
+        combined['dietary_requirements'] = {'$in': dietary}
+    if cuisines:
+        combined['cuisine'] = {'$in': cuisines}
+    docs = _fetch(combined)
+    if len(docs) >= 3:
+        return docs, True
+
+    if cuisines:
+        docs = _fetch({**base_match, 'cuisine': {'$in': cuisines}})
+        if len(docs) >= 3:
+            return docs, True
+
+    if dietary:
+        docs = _fetch({**base_match, 'dietary_requirements': {'$in': dietary}})
+        if len(docs) >= 3:
+            return docs, True
+
+    return _get_global_featured(mongo), False
+
+
 @bp.route('/', methods=['GET'])
 @cache.cached(timeout=1800, key_prefix='index', unless=lambda: current_user.is_authenticated)
 def index():
     mongo = current_app.mongo
-    featured = list(
-        mongo.db.bbcgoodfood
-        .find({'average_rating': {'$gt': 4.4, '$lt': 5}}, _CARD_PROJECT)
-        .sort('number_of_ratings', -1)
-        .limit(3)
-    )
+
+    user_doc = None
+    if current_user.is_authenticated:
+        user_doc = mongo.db.users.find_one({'_id': ObjectId(current_user.id)}) or {}
+
+    featured, is_personalised = _get_featured(mongo, user_doc)
     cuisines = _get_cached_cuisines(mongo)
     top_cuisines = _get_cached_top_cuisines(mongo)
     return render_template(
         'index.html',
         featured_recipes_data=featured,
+        featured_is_personalised=is_personalised,
         cuisines=cuisines,
         top_cuisines=top_cuisines,
     )
@@ -110,7 +170,7 @@ def search():
     if request.args.get('q'):
         query_str = request.args.get('q').strip()
         if query_str:
-            match['$text'] = {'$search': f'"{query_str}"'}
+            match['$text'] = {'$search': query_str}
 
     if request.args.get('cuisine'):
         cuisine_filter = request.args.get('cuisine').strip()
