@@ -8,6 +8,13 @@ bp = Blueprint('main', __name__)
 
 PER_PAGE = 6
 
+# Fields needed for recipe cards — keeps documents small across all queries
+_CARD_PROJECT = {
+    '_id': 1, 'title': 1, 'image_url': 1, 'cuisine': 1,
+    'prices': 1, 'total_time': 1, 'average_rating': 1,
+    'number_of_ratings': 1, 'dietary_requirements': 1, 'description': 1,
+}
+
 
 def _get_top_cuisines(mongo, n=5):
     pipeline = [
@@ -22,23 +29,39 @@ def _get_top_cuisines(mongo, n=5):
     return [c for c, _ in sorted(counts.items(), key=lambda x: x[1], reverse=True)[:n]]
 
 
+def _get_cached_cuisines(mongo):
+    cuisines = cache.get('all_cuisines')
+    if cuisines is None:
+        raw = (
+            mongo.db.bbcgoodfood.distinct('cuisine') +
+            mongo.db.tasty.distinct('cuisine') +
+            mongo.db.user_recipes.distinct('cuisine', {'status': 'approved'})
+        )
+        cuisines = sorted({c for c in raw if c and c.strip()})
+        cache.set('all_cuisines', cuisines, timeout=1800)
+    return cuisines
+
+
+def _get_cached_top_cuisines(mongo, n=5):
+    top = cache.get('top_cuisines')
+    if top is None:
+        top = _get_top_cuisines(mongo, n)
+        cache.set('top_cuisines', top, timeout=1800)
+    return top
+
+
 @bp.route('/', methods=['GET'])
-@cache.cached(timeout=300, key_prefix='index', unless=lambda: current_user.is_authenticated)
+@cache.cached(timeout=1800, key_prefix='index', unless=lambda: current_user.is_authenticated)
 def index():
     mongo = current_app.mongo
     featured = list(
         mongo.db.bbcgoodfood
-        .find({'average_rating': {'$gt': 4.4, '$lt': 5}})
+        .find({'average_rating': {'$gt': 4.4, '$lt': 5}}, _CARD_PROJECT)
         .sort('number_of_ratings', -1)
         .limit(3)
     )
-    raw_cuisines = (
-        mongo.db.bbcgoodfood.distinct('cuisine') +
-        mongo.db.tasty.distinct('cuisine') +
-        mongo.db.user_recipes.distinct('cuisine', {'status': 'approved'})
-    )
-    cuisines = sorted({c for c in raw_cuisines if c and c.strip()})
-    top_cuisines = _get_top_cuisines(mongo)
+    cuisines = _get_cached_cuisines(mongo)
+    top_cuisines = _get_cached_top_cuisines(mongo)
     return render_template(
         'index.html',
         featured_recipes_data=featured,
@@ -102,6 +125,7 @@ def search():
     except (ValueError, TypeError):
         page = 1
 
+    project_stage = [{'$project': _CARD_PROJECT}]
     match_stage = [{'$match': match}] if match else []
 
     # user_recipes: strip ingredient_tags filter (user_recipes use free-text ingredients, not tags)
@@ -113,9 +137,9 @@ def search():
     # Fetch all matching docs from all collections then sort and paginate in Python.
     # Per-collection DB pagination can never give a globally correct sort order when
     # the collections have different distributions of the sort field.
-    bbc_all = list(mongo.db.bbcgoodfood.aggregate(match_stage))
-    tasty_all = list(mongo.db.tasty.aggregate(match_stage))
-    user_all = list(mongo.db.user_recipes.aggregate(user_match_stage))
+    bbc_all = list(mongo.db.bbcgoodfood.aggregate(match_stage + project_stage))
+    tasty_all = list(mongo.db.tasty.aggregate(match_stage + project_stage))
+    user_all = list(mongo.db.user_recipes.aggregate(user_match_stage + project_stage))
     data_all = bbc_all + tasty_all + user_all
 
     if sort == 'rating':
@@ -149,3 +173,18 @@ def search():
         page=page,
         total_pages=total_pages,
     )
+
+
+@bp.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@bp.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+
+@bp.route('/privacy')
+def privacy():
+    return render_template('privacy.html')

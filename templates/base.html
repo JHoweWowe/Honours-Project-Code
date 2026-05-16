@@ -5,30 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{% block meta_description %}Find budget-friendly recipes that fit your cooking time and dietary needs. Filter by time, diet, and ingredients.{% endblock %}">
 
-    <!-- CDN preconnect: Bootstrap, Bootstrap Icons, Tom Select, jQuery, Popper all served from cdn.jsdelivr.net -->
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <!-- 1. LCP preload + page-critical inline styles — first in <head> so browser queues image
+            and can paint above-fold before any external stylesheet arrives -->
+    {% block lcp_preload %}{% endblock %}
 
-    <title>{% block title %} {% endblock %} - JustCook</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <!-- 2. Critical inline CSS — covers every Bootstrap class visible above the fold so that
+            bootstrap.min.css can load async without any visible layout shift or FOUC. -->
+    <style>
+      /* --- Self-hosted Poppins (latin subset) --- */
+      @font-face{font-family:'Poppins';font-style:normal;font-weight:100;font-display:swap;src:url('{{ url_for("static", filename="fonts/poppins-400.woff2") }}') format('woff2')}
+      @font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url('{{ url_for("static", filename="fonts/poppins-500.woff2") }}') format('woff2')}
+      @font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url('{{ url_for("static", filename="fonts/poppins-600.woff2") }}') format('woff2')}
+      @font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url('{{ url_for("static", filename="fonts/poppins-700.woff2") }}') format('woff2')}
+      /* --- Reset --- */
+      *,*::before,*::after{box-sizing:border-box}
+      body{margin:0;font-family:'Poppins',sans-serif;font-size:1rem;font-weight:100;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%}
+      a{color:var(--bs-link-color);text-decoration:underline}
+      a:hover{color:var(--bs-link-hover-color)}
+      button{cursor:pointer}
+      button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}
+      /* --- Brand vars (our green + Bootstrap light) --- */
+      :root{--bs-primary:#1c7c4e;--bs-primary-rgb:28,124,78;--bs-link-color:#1c7c4e;--bs-link-hover-color:#155e3a;--bs-light-rgb:248,249,250;--bs-gutter-x:1.5rem;--bs-gutter-y:0}
+      /* --- Navbar structure --- */
+      .navbar{position:relative;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-top:.5rem;padding-bottom:.5rem}
+      .navbar>.container-fluid{display:flex;flex-wrap:inherit;align-items:center;justify-content:space-between}
+      .navbar-brand{padding-top:.3125rem;padding-bottom:.3125rem;margin-right:1rem;font-size:1.25rem;text-decoration:none;white-space:nowrap;color:rgba(0,0,0,.9)}
+      .navbar-brand:hover,.navbar-brand:focus{text-decoration:none}
+      .navbar-toggler{padding:.25rem .75rem;font-size:1.25rem;line-height:1;background-color:transparent;border:1px solid rgba(0,0,0,.1);border-radius:.25rem;cursor:pointer}
+      .navbar-toggler-icon{display:inline-block;width:1.5em;height:1.5em;vertical-align:middle;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280%2c 0%2c 0%2c 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:center;background-size:100%}
+      .bg-light{background-color:rgba(var(--bs-light-rgb),1)!important}
+      .collapse:not(.show){display:none}
+      .navbar-collapse{flex-basis:100%;flex-grow:1;align-items:center}
+      .navbar-nav{display:flex;flex-direction:column;padding-left:0;margin-bottom:0;list-style:none}
+      .nav-link{display:block;padding:.5rem 1rem;text-decoration:none;color:rgba(0,0,0,.55)}
+      .flex-row{flex-direction:row!important}
+      .flex-wrap{flex-wrap:wrap!important}
+      .container-fluid{width:100%;padding-right:.75rem;padding-left:.75rem;margin-right:auto;margin-left:auto}
+      /* --- Tablet+ navbar expand --- */
+      @media(min-width:768px){
+        .navbar-expand-md{flex-wrap:nowrap;justify-content:flex-start}
+        .navbar-expand-md .navbar-collapse{display:flex!important;flex-basis:auto}
+        .navbar-expand-md .navbar-toggler{display:none}
+        .navbar-expand-md .navbar-nav{flex-direction:row}
+      }
+      /* --- Button primary (search + view recipe) --- */
+      .btn-primary{background-color:#1c7c4e;border-color:#1c7c4e;color:#fff}
+      .btn-primary:hover,.btn-primary:focus{background-color:#155e3a;border-color:#155e3a;color:#fff}
+      /* --- Nav title override --- */
+      #nav-title{margin-left:.5rem;font-weight:600;font-size:1.5rem;letter-spacing:-.01em}
+      .form-check-input:checked{background-color:#1c7c4e;border-color:#1c7c4e}
+    </style>
 
-    <!-- Bootstrap CSS and Icons — must load before our overrides -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <!-- 3. Poppins self-hosted — preload body (400) and heading (600) weights so the browser
+            fetches them in parallel with other resources before first paint -->
+    <link rel="preload" href="{{ url_for('static', filename='fonts/poppins-400.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', filename='fonts/poppins-600.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-    <!-- Custom overrides — after Bootstrap so our rules win -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='recipe.css') }}">
+    <title>{% block title %} {% endblock %} - JustCookIt</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}?v={{ config.ASSET_VERSION }}">
 
-    <!-- Tom Select CSS — async to avoid render-blocking (only used on index page) -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet"></noscript>
+    <!-- 4. Bootstrap CSS — self-hosted + async via media="print" trick.
+            Preload starts the fetch immediately; onload flips media to "all" once downloaded.
+            Above-fold appearance maintained entirely by the inline block above. -->
+    <link rel="preload" href="{{ url_for('static', filename='bootstrap.min.css') }}?v={{ config.ASSET_VERSION }}" as="style">
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}?v={{ config.ASSET_VERSION }}" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="{{ url_for('static', filename='bootstrap.min.css') }}?v={{ config.ASSET_VERSION }}" rel="stylesheet"></noscript>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;600;700;900&family=Roboto:wght@400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500;600;700;900&family=Roboto:wght@400&display=swap" rel="stylesheet"></noscript>
+    <!-- 5. Bootstrap Icons — self-hosted; woff2 preloaded to eliminate the CSS→font 2-hop delay -->
+    <link rel="preload" href="{{ url_for('static', filename='bootstrap-icons.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', filename='bootstrap-icons.min.css') }}?v={{ config.ASSET_VERSION }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons.min.css') }}?v={{ config.ASSET_VERSION }}"></noscript>
+
+    <!-- 6. base.css — async; above-fold styles are covered by the inline block above -->
+    <link rel="preload" href="{{ url_for('static', filename='base.css') }}?v={{ config.ASSET_VERSION }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}?v={{ config.ASSET_VERSION }}"></noscript>
 
     {% block head_extra %}{% endblock %}
 
@@ -54,7 +104,7 @@
     <!-- HEADER -->
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" id="nav-title" href="{{ url_for('main.index') }}">JustCook</a>
+            <a class="navbar-brand" id="nav-title" href="{{ url_for('main.index') }}">JustCookIt</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -130,16 +180,19 @@
                     Developed with Passion, Deployed on Heroku.
                 </div>
                 <div id="footer-right" class="col-md-4">
-                    <p>© 2022-2026 <a id="justin-howe-link" href="https://justinhowe.me/" target="_blank" rel="noopener noreferrer">Justin Howe</a></p>
+                    <p id="justin-howe-link-p">© 2022-2026 <a id="justin-howe-link" href="https://justinhowe.me/" target="_blank" rel="noopener noreferrer">Justin Howe</a> · JustCookIt</p>
+                    <p>
+                        <a class="footer-link" href="{{ url_for('main.terms') }}">Terms of Service</a> &middot;
+                        <a class="footer-link" href="{{ url_for('main.privacy') }}">Privacy Policy</a> &middot;
+                        <a class="footer-link" href="{{ url_for('main.about') }}">About</a>
+                    </p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Optional JS -->
-    <script defer src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <!-- Bootstrap bundle (includes Popper) — self-hosted, one request instead of two -->
+    <script defer src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}?v={{ config.ASSET_VERSION }}"></script>
 
     <script>
         // Show page loader when navigating away

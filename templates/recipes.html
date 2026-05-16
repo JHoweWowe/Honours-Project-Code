@@ -47,7 +47,7 @@
             {% for d in data %}
             <div class="col-md-4 card" id="relevant-recipe-container">
                 <a href="{{ url_for('recipes.view_recipe', id=d._id) }}">
-                    <img class="card-img" src="{{ d.image_url }}" alt="{{ d.title }}" loading="lazy">
+                    <img class="card-img" src="{{ d.image_url }}" alt="{{ d.title }}" loading="lazy" decoding="async" width="400" height="300" onerror="this.onerror=null;this.src='{{ url_for('static', filename='default_image.webp') }}'">
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ d.title.capitalize() }}</h5>

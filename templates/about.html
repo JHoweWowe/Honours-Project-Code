@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}About{% endblock %}
+
+{% block meta_description %}Learn about JustCookIt — a recipe discovery app helping you find meals that fit your time, budget, and dietary needs. Built by Justin Howe.{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 760px; padding: 2.5rem 1rem;">
+
+    <h1 style="font-weight: 700; margin-bottom: 0.25rem;">About JustCookIt</h1>
+    <p class="text-muted" style="margin-bottom: 2rem;">A University of Edinburgh Honours Project</p>
+
+    <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">What is JustCookIt?</h2>
+        <p>
+            JustCookIt helps you discover recipes that fit your time, budget, and dietary needs —
+            whether you're cooking for one or a family of five. Search curated recipes from BBC Good Food
+            and Tasty, filter by cooking time, dietary requirements, and cuisine, and see estimated costs
+            per serving so you always know what you're spending.
+        </p>
+        <p>
+            Signed-in users can also submit their own recipes to share with the community, save favourite
+            recipes to their profile, and find nearby supermarkets stocking each recipe's ingredients.
+        </p>
+    </section>
+
+    <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">The Research Behind It</h2>
+        <p>
+            JustCookIt originated as a University of Edinburgh honours-level dissertation project titled
+            <em>"Designing and Implementing a Personalized Food Recipe Platform for University Students
+            using Web Data Extraction"</em>. The dissertation explored using web data extraction techniques
+            to build an initial version of an online food recipe website targeted for university students
+            to make cooking easier for themselves.
+        </p>
+        <p>
+            The platform has since grown beyond its academic roots into a publicly available recipe
+            discovery tool for anyone who wants to cook well without overcomplicating it.
+
+            For further information:
+        </p>
+        <p>
+            <a href="https://justinhowe.me/" target="_blank" rel="noopener noreferrer">justinhowe.me</a> &middot;
+            <a href="https://github.com/JHoweWowe" target="_blank" rel="noopener noreferrer">GitHub</a> &middot;
+            <a href="https://github.com/JHoweWowe/Honours-Project-Code/blob/master/honours_project_report/report.pdf" target="_blank" rel="noopener noreferrer">Report</a>
+        </p>
+    </section>
+
+    <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">Who built it?</h2>
+        <p>
+            JustCookIt was built by <strong>Justin Howe</strong>, a University of Edinburgh graduate,
+            as an honours project. The goal: make recipe discovery genuinely useful for people who
+            care about time and money, not just what looks good in a photo.
+        </p>
+    </section>
+
+    <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">Tech stack</h2>
+        <p>
+            Python · Flask · MongoDB Atlas · Heroku · Bootstrap 5 · Google OAuth
+        </p>
+    </section>
+
+    <section id="contact" style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">Contact</h2>
+        <p>Found a bug, have a suggestion, or want to get in touch? Email
+            <a href="mailto:howejust@gmail.com">howejust@gmail.com</a> directly.
+        </p>
+    </section>
+
+</div>
+{% endblock %}

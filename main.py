@@ -1,10 +1,11 @@
 import configparser
 import os
+import subprocess
 
-from flask import Flask
-from pymongo import MongoClient, TEXT
+from flask import Flask, jsonify
+from pymongo import MongoClient, TEXT, DESCENDING
 
-from extensions import cache, login_manager
+from extensions import cache, compress, login_manager
 
 # Load .env if python-dotenv is available (falls back to settings.ini)
 try:
@@ -38,9 +39,23 @@ def create_app():
     if not os.environ.get('DYNO'):
         os.environ.setdefault('OAUTHLIB_INSECURE_TRANSPORT', '1')
 
-    app.config['CACHE_TYPE'] = 'SimpleCache'
+    if os.environ.get('REDIS_URL'):
+        app.config['CACHE_TYPE'] = 'RedisCache'
+        app.config['CACHE_REDIS_URL'] = os.environ['REDIS_URL']
+    else:
+        app.config['CACHE_TYPE'] = 'SimpleCache'
     app.config['CACHE_DEFAULT_TIMEOUT'] = 300
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 year — cache static assets aggressively
+
+    try:
+        _sha = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], text=True).strip()
+    except Exception:
+        _sha = '1'
+    # ASSET_VERSION resolves in order: manual override → Heroku SOURCE_VERSION → local git SHA
+    app.config['ASSET_VERSION'] = os.environ.get('ASSET_VERSION') or os.environ.get('SOURCE_VERSION', _sha)
+    app.config['COMPRESS_REGISTER'] = True
     cache.init_app(app)
+    compress.init_app(app)
     login_manager.init_app(app)
 
     mongo = MongoClient(_get_mongo_uri())
@@ -53,7 +68,15 @@ def create_app():
     mongo.db.user_recipes.create_index(
         [('title', TEXT), ('description', TEXT)], default_language='english'
     )
+    # Compound index for featured recipes query: filter by average_rating, sort by number_of_ratings
+    mongo.db.bbcgoodfood.create_index(
+        [('average_rating', DESCENDING), ('number_of_ratings', DESCENDING)]
+    )
     app.mongo = mongo
+
+    @app.route('/health')
+    def health():
+        return jsonify(ok=True), 200
 
     app.config['ADMIN_EMAILS'] = [os.environ.get('ADMIN_EMAIL', 'howejust@gmail.com')]
     app.config['GA4_MEASUREMENT_ID'] = os.environ.get('GA4_MEASUREMENT_ID', '')
