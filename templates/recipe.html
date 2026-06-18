@@ -92,8 +92,13 @@
                 <div class="col-6">
                     <div class="recipe-info-section">
                         <p class="recipe-section-label">Credits</p>
+                        {% if recipe_data.submitter_name %}
+                        <p class="mb-0">{{ recipe_data.submitter_name }}</p>
+                        <p class="text-muted small mb-0">Community Recipe</p>
+                        {% else %}
                         <p class="mb-0">{{ recipe_data.author }}</p>
                         <p class="text-muted small mb-0">BBCGoodFood / Tasty</p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-6">

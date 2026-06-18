@@ -1,3 +1,4 @@
+import mimetypes
 import os
 from datetime import datetime, timezone
 
@@ -11,6 +12,15 @@ from routes.profile import DIETARY_OPTIONS
 
 _ALLOWED_MIME = {'image/jpeg', 'image/png', 'image/webp'}
 _MAX_IMAGE_BYTES = 5 * 1024 * 1024  # 5 MB
+
+
+def _resolve_mimetype(file_storage):
+    """Return MIME type, falling back to guessing from the filename if the browser sends a generic type."""
+    mime = (file_storage.mimetype or '').lower()
+    if mime not in _ALLOWED_MIME:
+        guessed, _ = mimetypes.guess_type(file_storage.filename or '')
+        mime = (guessed or '').lower()
+    return mime
 
 
 def _send_email(to: str, subject: str, html: str) -> None:
@@ -35,13 +45,24 @@ def _upload_image(file_storage):
     """Upload a werkzeug FileStorage to Cloudinary. Returns secure_url or None on failure."""
     if not file_storage or not file_storage.filename:
         return None
-    if file_storage.mimetype not in _ALLOWED_MIME:
+    mime = _resolve_mimetype(file_storage)
+    if mime not in _ALLOWED_MIME:
+        current_app.logger.warning('Image upload rejected: unrecognised MIME type %r for file %r', mime, file_storage.filename)
         return None
     data = file_storage.read()
     if len(data) > _MAX_IMAGE_BYTES:
+        current_app.logger.warning('Image upload rejected: file size %d bytes exceeds 5 MB limit', len(data))
         return None
     try:
+        import cloudinary
         import cloudinary.uploader
+        if not cloudinary.config().cloud_name:
+            cloudinary_url = os.environ.get('CLOUDINARY_URL', '')
+            if cloudinary_url:
+                cloudinary.config(cloudinary_url=cloudinary_url)
+            else:
+                current_app.logger.error('Image upload failed: CLOUDINARY_URL env var is not set')
+                return None
         result = cloudinary.uploader.upload(
             data,
             folder='justcookit/user_recipes',
@@ -49,6 +70,7 @@ def _upload_image(file_storage):
         )
         return result.get('secure_url')
     except Exception:
+        current_app.logger.exception('Cloudinary upload failed')
         return None
 
 bp = Blueprint('submit', __name__)
