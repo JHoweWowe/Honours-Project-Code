@@ -1,5 +1,13 @@
 /__pycache__/
+*/__pycache__/*
 /venv/
-/web_scraping/__pycache__/
 geckodriver.log
 settings.ini
+/roadMap/
+.env
+
+# Test / coverage artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+/tests/step_defs/__pycache__/

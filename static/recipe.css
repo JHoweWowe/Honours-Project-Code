@@ -1,46 +1,312 @@
-#recipeMoreInformationAccordion {
-    margin: 16px 0px;
-    border-bottom: 10px;
+/* Recipe hero image */
+.recipe-hero-img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
 }
-#recipe-data-right-div {
-    margin: 16px auto;
+
+/* Stats strip — full-width row below title */
+#recipe-stats-strip {
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 0;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 4px;
+}
+.recipe-stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+.recipe-stat i {
+    color: #1c7c4e;
+    font-size: 0.8rem;
+}
+.recipe-stat-star {
+    color: #ffc107 !important;
+}
+
+/* Overview row */
+#recipe-overview-row {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+#recipe-info-col {
+    padding-top: 12px;
+}
+.recipe-info-section {
+    margin-bottom: 14px;
+}
+.recipe-section-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+#recipe-description-text {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #343a40;
+}
+#recipe-info-col .recipe-section-label {
+    font-size: 0.68rem;
+}
+.recipe-tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* Nutrition chips */
+.nutrition-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.nutrition-chip {
+    background: #e9ecef;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 0.78rem;
+    color: #495057;
+}
+
+/* Options panel — full-width bar above ingredients + pricing */
+#options-col {
+    margin-bottom: 16px;
+}
+#options-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px 16px;
+    border: 1px solid #dee2e6;
+}
+#options-controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
     align-items: center;
 }
-
-#recipe-description-title, #recipe-dietary-requirements-title,
-#recipe-cuisine-title, #recipe-total-cooking-time-title {
-    font-size: 1rem;
+#servings-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
 }
-#ingredient-title {
-    margin: 0px auto 4px;
-    line-height: 1.5;
+#servings-input {
+    width: 70px;
+}
+#currency-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+#currency-select {
+    width: auto;
+}
+
+/* Directions — full width, seen first */
+#recipe-directions-row {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #dee2e6;
+}
+#recipe-directions-row h2 {
+    font-size: 1.35rem;
+    margin-bottom: 14px;
 }
 #directions-div {
-    margin: 16px auto;
+    margin: 0;
 }
-.accordion-item {
-    border: 2px solid rgba(0,0,0,.250) !important;
+.direction-step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 18px;
+    align-items: flex-start;
+}
+.step-number {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: #1c7c4e;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-top: 2px;
+}
+.step-text {
+    flex: 1;
+    margin: 0;
+    line-height: 1.65;
 }
 
-#ingredient-gbp-cost-div {
+/* Lower row: ingredients + pricing side by side */
+#recipe-lower-row {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+#ingredients-col h2,
+#price-container h2 {
+    font-size: 1.35rem;
+    margin-bottom: 14px;
+}
+
+/* Equipment strip inside ingredients col */
+#equipment-section {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Ingredient items */
+.ingredient-item {
+    margin: 0 auto 0;
+    line-height: 1.5;
+    font-size: 0.925rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+.ingredient-item:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Pricing section */
+#price-container {
+    padding-top: 0;
+    border-top: none;
+    margin-top: 24px;
+}
+#price-summary {
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.price-summary-card {
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px 18px;
+    min-width: 120px;
+}
+.price-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+.price-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #212529;
+    line-height: 1.2;
 }
 #ingredient-gbp-cost-breakdown {
-    margin: 16px auto 8px;
+    margin: 0 0 8px;
 }
-#ingredient-gbp-cost-div, #ingredient-gbp-cost-breakdown h4 {
-    padding: 0px;
+.ingredient-gbp-cost-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 8px;
+}
+.ingr-name {
+    flex: 1;
+    font-size: 0.875rem;
+    color: #495057;
+}
+.ingr-cost-val {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #212529;
+    white-space: nowrap;
 }
 
-/** Screens larger than 768px which is default breakpoint **/
+/* Print button */
+#print-btn {
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+/* Related recipes */
+#related-recipes-container {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid #dee2e6;
+}
+#related-recipes-container h2 {
+    font-size: 1.35rem;
+    margin-bottom: 16px;
+}
+.related-recipe-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+}
+.related-recipe-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+.related-card-img {
+    height: 180px;
+    object-fit: cover;
+    background-color: #e9ecef;
+}
+
+/** ≥768px: info col resets padding, text bumps up, ingredients/pricing side by side **/
 @media screen and (min-width: 768px) {
-    #recipe-description-title, #recipe-dietary-requirements-title,
-    #recipe-cuisine-title, #recipe-total-cooking-time-title, #accordion-more-info-title {
-        font-size: 1.75rem;
+    #recipe-image-col {
+        flex: 0 0 400px;
+        max-width: 400px;
     }
-    #recipe-data-right-div {
-        margin: 0px auto;
+    #recipe-info-col {
+        flex: 1;
+        max-width: none;
+        padding-top: 0;
     }
+    #recipe-description-text {
+        font-size: 1.15rem;
+        line-height: 1.7;
+    }
+    #options-controls-row {
+        flex-wrap: nowrap;
+    }
+    /* On desktop show ingredients at top-left beside pricing */
+    #ingredients-col {
+        border-right: 1px solid #dee2e6;
+        padding-right: 24px;
+    }
+    #price-container {
+        padding-left: 24px;
+        margin-top: 0;
+    }
+}
+
+/** Print **/
+@media print {
+    #options-col, #options-container, #price-container,
+    #print-btn, #related-recipes-container { display: none !important; }
+    .ingredient-item { font-size: 11pt; }
+    .step-text { font-size: 11pt; }
 }

@@ -1,77 +1,140 @@
 {% extends 'base.html' %}
-<head>
-  <title>{% block title %} Main {% endblock %}</title>
-</head>
+
+{% block meta_description %}Find budget-friendly recipes that fit your cooking time and dietary needs. Browse by cuisine, filter by time, diet type, or ingredients.{% endblock %}
+
+{% block lcp_preload %}
+<link rel="preload" as="image" href="{{ url_for('static', filename='default_image.webp') }}?v={{ config.ASSET_VERSION }}" type="image/webp" fetchpriority="high">
+<link rel="preload" href="{{ url_for('static', filename='tom-select.bootstrap5.min.css') }}?v={{ config.ASSET_VERSION }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="{{ url_for('static', filename='tom-select.bootstrap5.min.css') }}?v={{ config.ASSET_VERSION }}" rel="stylesheet"></noscript>
+<style>
+  /* --- Hero (painted before any external CSS) --- */
+  #outer-search-container{position:relative;overflow:hidden;z-index:100}
+  .hero-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
+  #outer-search-container::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.52);z-index:1}
+  #search-container{min-height:60vh;position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2.5rem 1rem;gap:.6rem}
+  #hero-tagline-text{color:#fff;font-size:clamp(1rem,3.5vw,1.35rem);font-weight:500;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.5);margin:0 0 .4rem;max-width:480px;opacity:.95}
+  /* --- Bootstrap form/grid — search bar renders correctly while bootstrap.min.css is async --- */
+  .row{--bs-gutter-x:1.5rem;--bs-gutter-y:0;display:flex;flex-wrap:wrap;margin-top:calc(-1*var(--bs-gutter-y));margin-right:calc(-.5*var(--bs-gutter-x));margin-left:calc(-.5*var(--bs-gutter-x))}
+  .row>.col-6{flex:0 0 auto;width:50%;padding-right:calc(var(--bs-gutter-x)*.5);padding-left:calc(var(--bs-gutter-x)*.5);margin-top:var(--bs-gutter-y)}
+  .g-2{--bs-gutter-x:.5rem;--bs-gutter-y:.5rem}
+  .input-group{position:relative;display:flex;flex-wrap:wrap;align-items:stretch;width:100%}
+  .input-group>.form-control{position:relative;flex:1 1 auto;width:1%;min-width:0;border-top-right-radius:0!important;border-bottom-right-radius:0!important}
+  .input-group>.btn{border-top-left-radius:0!important;border-bottom-left-radius:0!important}
+  .form-control{display:block;width:100%;padding:.375rem .75rem;font-size:1rem;line-height:1.5;color:#212529;background-color:#fff;border:1px solid #ced4da;border-radius:.375rem}
+  .btn{display:inline-block;font-weight:400;line-height:1.5;color:#212529;text-align:center;text-decoration:none;vertical-align:middle;cursor:pointer;background-color:transparent;border:1px solid transparent;padding:.375rem .75rem;font-size:1rem;border-radius:.375rem}
+  .btn-sm{padding:.25rem .5rem;font-size:.875rem;border-radius:.2rem}
+  .btn-check{position:absolute;clip:rect(0,0,0,0);pointer-events:none}
+  .btn-outline-light{color:#f8f9fa;border-color:#f8f9fa}
+  .rounded-pill{border-radius:50rem!important}
+  .d-block{display:block!important}
+  .mb-1{margin-bottom:.25rem!important}
+  .mb-2{margin-bottom:.5rem!important}
+  .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+  /* --- Search form width + hero height — prevents CLS from async base.css resizing after paint --- */
+  #test-submit{width:100%;max-width:540px}
+  @media(min-width:768px){
+    #test-submit{width:50vw;max-width:700px}
+    #search-container{min-height:80vh}
+    #hero-tagline-text{font-size:clamp(1.1rem,2vw,1.4rem)}
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
     <!-- SEARCH RECIPES -->
     <div id="outer-search-container">
+      <picture>
+        <source srcset="{{ url_for('static', filename='default_image.webp') }}?v={{ config.ASSET_VERSION }}" type="image/webp">
+        <img class="hero-bg-img" src="{{ url_for('static', filename='default_image.jpg') }}?v={{ config.ASSET_VERSION }}" alt="" fetchpriority="high">
+      </picture>
       <div id="search-container">
+
+        <!-- Hero tagline -->
+        <p id="hero-tagline-text">Discover recipes that suit you: your time, budget, and taste.</p>
+
         <form id="test-submit" action="/search" method="GET">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Recipe Name, Ingredient or Keyword">
-                <span class="input-group-append">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </span>
+            <!-- Main search bar -->
+            <div class="input-group mb-2">
+                <label for="search-q" class="visually-hidden">Search recipes by name, ingredient or keyword</label>
+                <input type="text" id="search-q" name="q" class="form-control" placeholder="Recipe name, ingredient or keyword">
+                <button class="btn btn-primary" type="submit" aria-label="Search recipes">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
             </div>
 
-            <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-headingOne">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                      <span id="advanced-search-title">Advanced Search</span>
-                    </button>
-                  </h2>
-                  <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                    <div class="accordion-body">
-                      <div class="row">
-                        <div class="col-md-6" id="total-cooking-time-container">
-                          <h3>Maximum Total Cooking Time:</h3>
-                          <div class="slidecontainer">
-                            <input type="range" min="0" max="120" value="0" step="5" class="slider" id="cooking-time-range" name="time">
-                            <p><span id="cooking-time-span-value"></span> mins</p>
-                          </div>       
-                        </div>
-                        <div class="col-md-6" id="dietary-requirements-container">
-                          <h3>Dietary Requirements:</h3>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Vegetarian" id="vegetarian-checkbox" name="dq">
-                            <label class="form-check-label" for="vegetarian-checkbox">
-                              Vegetarian
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Vegan" id="vegan-checkbox" name="dq">
-                            <label class="form-check-label" for="vegan-checkbox">
-                              Vegan
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Gluten-free" id="gluten-free-checkbox" name="dq">
-                            <label class="form-check-label" for="gluten-free-checkbox">
-                              Gluten-Free
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Pescatarian" id="pescatarian-checkbox" name="dq">
-                            <label class="form-check-label" for="pescatarian-checkbox">
-                              Pescatarian
-                            </label>
-                          </div>
-                        </div>
-                        <div class="col-md-12" id="ingredients-container">
-                          <h1>Ingredients:</h1>
-                          <h3>Include:</h3>
-                          <input type="text" name="include" class="form-control" placeholder="Use commas to separate">
-                          <h3>Exclude:</h3>
-                          <input type="text" name="exclude" class="form-control" placeholder="Use commas to separate">
-                        </div>
-                      </div>
+            <!-- Time presets (radio pill buttons) -->
+            <div class="filter-row" id="time-filter-row">
+                <span class="filter-label">Time:</span>
+                <div class="filter-btn-group">
+                    <input type="radio" class="btn-check" name="time" id="time-any" value="0" checked autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="time-any">Any time</label>
+
+                    <input type="radio" class="btn-check" name="time" id="time-20" value="20" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="time-20">≤ 20 mins</label>
+
+                    <input type="radio" class="btn-check" name="time" id="time-30" value="30" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="time-30">≤ 30 mins</label>
+
+                    <input type="radio" class="btn-check" name="time" id="time-45" value="45" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="time-45">≤ 45 mins</label>
+
+                    <input type="radio" class="btn-check" name="time" id="time-60" value="60" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="time-60">≤ 60 mins</label>
+                </div>
+            </div>
+
+            <!-- Dietary toggles (checkbox pill buttons) -->
+            <div class="filter-row" id="diet-filter-row">
+                <span class="filter-label">Diet:</span>
+                <div class="filter-btn-group">
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-veg" value="Vegetarian" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-veg">Vegetarian</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-vegan" value="Vegan" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-vegan">Vegan</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-gf" value="Gluten-free" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-gf">Gluten-Free</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-pesc" value="Pescatarian" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-pesc">Pescatarian</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-dairy" value="Dairy-Free" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-dairy">Dairy-Free</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-nut" value="Nut-Free" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-nut">Nut-Free</label>
+
+                    <input type="checkbox" class="btn-check" name="dq" id="dq-halal" value="Halal" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="dq-halal">Halal</label>
+                </div>
+            </div>
+            
+            <!-- Cuisine quick-links row — top 5 by recipe count, dynamic from DB -->
+            <div class="filter-row" id="cuisine-filter-row">
+                <span class="filter-label">Cuisine:</span>
+                <div class="filter-btn-group">
+                    <input type="radio" class="btn-check" name="cuisine" id="cuisine-any" value="" checked autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="cuisine-any">Any</label>
+                    {% for c in top_cuisines %}
+                    <input type="radio" class="btn-check" name="cuisine" id="cuisine-{{ c | lower | replace(' ', '-') }}" value="{{ c }}" autocomplete="off">
+                    <label class="btn btn-outline-light btn-sm rounded-pill" for="cuisine-{{ c | lower | replace(' ', '-') }}">{{ c }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Ingredient tag inputs (Tom Select) -->
+            <div class="filter-row" id="ingredients-filter-row">
+                <div class="row g-2 w-100">
+                    <div class="col-6">
+                        <label class="filter-label d-block mb-1" for="include-input">Include:</label>
+                        <input type="text" id="include-input" name="include" placeholder="e.g. chicken">
                     </div>
-                  </div>
+                    <div class="col-6">
+                        <label class="filter-label d-block mb-1" for="exclude-input">Exclude:</label>
+                        <input type="text" id="exclude-input" name="exclude" placeholder="e.g. nuts">
+                    </div>
                 </div>
             </div>
         </form>
@@ -83,27 +146,43 @@
         <div class="row" style="margin: 0px auto">
             {% if featured_recipes_data | length > 0 %}
             <div class="col-md-12">
-              <h1 id="featured-student-recipes-title">Featured Student Recipes</h1>
+              <h1 id="featured-student-recipes-title">
+                {% if featured_is_personalised %}Top Picks for You{% else %}Top Picks{% endif %}
+              </h1>
             </div>
               {% for d in featured_recipes_data %}
               <div class="col-md card" id="featured-recipe-container">
-                  <img class="card-img" src="{{ d.image_url }}" alt="{{ d.description }}">
+                  <img class="card-img" src="{{ d.image_url }}" alt="{{ d.title }}" loading="lazy" decoding="async" width="400" height="300" onerror="this.onerror=null;this.src='{{ url_for('static', filename='default_image.webp') }}'">
                   <div class="card-body">
                       <h5 class="card-title">{{ d.title }}</h5>
+                      <div class="recipe-badges d-flex flex-wrap gap-1">
+                        {% if d.cuisine %}
+                        <span class="badge bg-secondary cuisine-badge">{{ d.cuisine }}</span>
+                        {% endif %}
+                        {% if d.prices and d.prices | length > 1 and d.prices[1] %}
+                        <span class="badge bg-success price-badge">£{{ "%.2f"|format(d.prices[1].overall_cost_per_serving) }}/person</span>
+                        {% endif %}
+                        {% if d.total_time %}
+                        <span class="badge bg-light text-dark time-badge"><i class="bi bi-clock"></i> {{ d.total_time }} mins</span>
+                        {% endif %}
+                      </div>
                       <div class="card-body-details-div">
-                        <p class="card-text">Description: {{ d.description | truncate(150) }}</p>
-                        <p class="card-text">Dietary Requirements:
-                          {% if d.dietary_requirements | length == 0 %}
-                          None
-                          {% else %}
-                          {{ d.dietary_requirements }}
+                        <p class="card-text card-description">{{ d.description | truncate(100) }}</p>
+                        <p class="card-text">
+                          {% if d.dietary_requirements | length > 0 %}
+                          {{ d.dietary_requirements | join(' · ') }}
                           {% endif %}
                         </p>
-                        <p class="card-text">Average Rating: {{ d.average_rating }} / 5</p>
-                        <p class="card-text">Number of Ratings: {{ d.number_of_ratings }}</p>  
+                        <p class="card-text card-rating">
+                          <i class="bi bi-star-fill text-warning" aria-hidden="true"></i>
+                          {{ d.average_rating }} / 5
+                          <span class="text-muted">· {{ d.number_of_ratings }} ratings</span>
+                        </p>
                       </div>
                       <div class="recipe-more-info-div">
-                        <a href="{{ url_for('view_recipe', id = d._id) }}" class="btn btn-primary">More Info</a>
+                        <a href="{{ url_for('recipes.view_recipe', id=d._id) }}" class="btn btn-primary w-100">
+                          View Recipe <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </a>
                       </div>
                   </div>
               </div>
@@ -112,7 +191,8 @@
         </div>
     </div>
 
-    <!-- Script -->
-    <script src="{{ url_for('static', filename='index.js') }}"></script>
-    
+    <!-- Tom Select JS then page scripts — both deferred; order guaranteed by spec -->
+    <script defer src="{{ url_for('static', filename='tom-select.complete.min.js') }}?v={{ config.ASSET_VERSION }}"></script>
+    <script defer src="{{ url_for('static', filename='index.js') }}?v={{ config.ASSET_VERSION }}"></script>
+
 {% endblock %}

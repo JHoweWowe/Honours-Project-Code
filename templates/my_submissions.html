@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}My Submissions{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; padding-top: 2rem; padding-bottom: 3rem;">
+
+    <h1 class="mb-1">
+        <i class="bi bi-journal-text" aria-hidden="true"></i> My Submissions
+    </h1>
+    <p class="text-muted mb-4">Track the status of recipes you've submitted.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% if submissions %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Recipe</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th>Note</th>
+                    {% if current_user.email in config['ADMIN_EMAILS'] %}<th>Actions</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in submissions %}
+                <tr>
+                    <td><strong>{{ s.title }}</strong></td>
+                    <td class="text-muted" style="white-space:nowrap;">{{ s.submitted_at.strftime('%d %b %Y') }}</td>
+                    <td>
+                        {% if s.status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                        {% elif s.status == 'rejected' %}
+                        <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if s.status == 'rejected' and s.moderation_note %}
+                        <span class="text-muted" style="font-size:0.875rem;">{{ s.moderation_note }}</span>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    {% if current_user.email in config['ADMIN_EMAILS'] %}
+                    <td>
+                        {% if s.status == 'pending' %}
+                        <form method="POST" action="{{ url_for('submit.approve_recipe', recipe_id=s._id) }}" class="d-inline me-1">
+                            <button type="submit" class="btn btn-sm btn-success">
+                                <i class="bi bi-check-lg" aria-hidden="true"></i> Approve
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('submit.reject_recipe', recipe_id=s._id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-x-lg" aria-hidden="true"></i> Reject
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-journal-x" style="font-size:2rem;" aria-hidden="true"></i>
+        <p class="mt-2">You haven't submitted any recipes yet.</p>
+        <a href="{{ url_for('submit.submit_form') }}" class="btn btn-primary mt-2">
+            <i class="bi bi-plus-circle" aria-hidden="true"></i> Submit a Recipe
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
